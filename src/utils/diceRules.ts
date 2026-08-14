@@ -1,4 +1,5 @@
 import {
+  RollActionCategory,
   SkillRank,
   DifficultyTier,
   AdvantageType,
@@ -176,7 +177,7 @@ export function resolveCombatExchange(
 }
 
 export function getNarrativeFeedback(
-  category: 'standard' | 'social' | 'combat' | 'poursuite' | 'danger_mort',
+  category: RollActionCategory,
   degree: DegreeResult,
   skillKey?: SkillKey
 ): {

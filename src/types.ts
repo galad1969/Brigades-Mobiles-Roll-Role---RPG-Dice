@@ -1,6 +1,6 @@
 export type PlayerRole = 'player' | 'gm';
 
-export type RollActionCategory = 'standard' | 'social' | 'combat' | 'poursuite' | 'danger_mort';
+export type RollActionCategory = 'generic' | 'standard' | 'social' | 'combat' | 'poursuite' | 'danger_mort';
 
 export type CharacteristicKey = 'perception' | 'presence' | 'vigueur' | 'sang_froid';
 

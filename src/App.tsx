@@ -55,7 +55,7 @@ import {
   SKILL_XP_COSTS,
 } from './data/rulesData';
 
-type TabKey = 'action' | 'social' | 'pursuit' | 'combat' | 'end_case';
+type TabKey = 'generic' | 'action' | 'social' | 'pursuit' | 'combat' | 'end_case';
 
 function determineDegree(total: number): DegreeResult {
   if (total <= 1) return 'echec_critique';
@@ -172,6 +172,24 @@ export default function App() {
         prompt('Copiez ce lien pour inviter votre brigade :', url);
       });
   };
+
+  // =========================================================================
+  // TAB 0 : TEST GÉNÉRIQUE RAPIDE (SANS SE PRENDRE LA TÊTE)
+  // =========================================================================
+  const [genericRank, setGenericRank] = useState<SkillRank>(2); // 0, 1, 2, 3, 4
+  const [genericDiffOrAttitude, setGenericDiffOrAttitude] = useState<number>(0); // Modificateur direct (-3 à +2)
+  const [genericAdvantage, setGenericAdvantage] = useState<AdvantageType>(0); // 0, 1, 2
+  const [genericDisadvantage, setGenericDisadvantage] = useState<DisadvantageType>(0); // 0, 1, 2
+  const [genericHealthPenalty, setGenericHealthPenalty] = useState<number>(0); // 0, -1, -2, -3
+
+  const genericTotalModifier =
+    genericRank +
+    genericDiffOrAttitude +
+    genericAdvantage -
+    genericDisadvantage +
+    genericHealthPenalty;
+
+  const genericGuaranteedFloor = determineDegree(1 + genericTotalModifier);
 
   // =========================================================================
   // TAB 1 : TEST D'ACTION / PHYSIQUE / ENQUÊTE (OFFICIAL D8 RULES)
@@ -375,7 +393,9 @@ export default function App() {
         category: categoryKey,
         actionName: categoryName,
         rank:
-          categoryKey === 'social'
+          categoryKey === 'generic'
+            ? genericRank
+            : categoryKey === 'social'
             ? socialRank
             : categoryKey === 'pursuit'
             ? pursuitRank
@@ -387,9 +407,11 @@ export default function App() {
         finalTotal,
         degree,
         guaranteedFloor: determineDegree(1 + modifier),
-        difficultyMod: actionDifficultyMod,
+        difficultyMod: categoryKey === 'generic' ? genericDiffOrAttitude : actionDifficultyMod,
         rawAdvantage:
-          categoryKey === 'social'
+          categoryKey === 'generic'
+            ? genericAdvantage
+            : categoryKey === 'social'
             ? socialAdvantage
             : categoryKey === 'pursuit'
             ? pursuitAdvantage
@@ -397,16 +419,22 @@ export default function App() {
             ? combatAdvantage
             : actionAdvantage,
         appliedAdvantage:
-          categoryKey === 'action' ? appliedActionAdvantage : actionAdvantage,
+          categoryKey === 'generic'
+            ? genericAdvantage
+            : categoryKey === 'action'
+            ? appliedActionAdvantage
+            : actionAdvantage,
         rawDisadvantage:
-          categoryKey === 'social'
+          categoryKey === 'generic'
+            ? genericDisadvantage
+            : categoryKey === 'social'
             ? socialDisadvantage
             : categoryKey === 'pursuit'
             ? pursuitDisadvantage
             : categoryKey === 'combat'
             ? combatDisadvantage
             : actionDisadvantage,
-        appliedDisadvantage: actionDisadvantage,
+        appliedDisadvantage: categoryKey === 'generic' ? genericDisadvantage : actionDisadvantage,
         halfRuleApplied: isActionExtremeOrNightmare && actionAdvantage > 0,
         injuryStage:
           categoryKey === 'social'
@@ -416,7 +444,7 @@ export default function App() {
             : categoryKey === 'combat'
             ? combatInjury
             : actionInjury,
-        injuryMod: actionInjuryPenalty,
+        injuryMod: categoryKey === 'generic' ? genericHealthPenalty : actionInjuryPenalty,
         characterWeapon: categoryKey === 'combat' ? combatCharWeapon : undefined,
         opponentWeapon: categoryKey === 'combat' ? combatOppWeapon : undefined,
         damageInflicted: dmgInflicted,
@@ -586,6 +614,17 @@ export default function App() {
           {/* HORIZONTAL NAVIGATION TABS */}
           <nav className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2.5 mb-4 text-xs sm:text-sm">
             <button
+              onClick={() => setActiveTab('generic')}
+              className={`px-3 py-1.5 cursor-pointer transition-colors ${
+                activeTab === 'generic'
+                  ? 'border border-[#6B1717] bg-[#6B1717] text-white font-bold shadow-xs'
+                  : 'text-stone-800 hover:text-[#6B1717] font-semibold bg-stone-100/80 border border-stone-300'
+              }`}
+            >
+              🎲 Test Générique (Rapide)
+            </button>
+
+            <button
               onClick={() => setActiveTab('action')}
               className={`px-3 py-1.5 cursor-pointer transition-colors ${
                 activeTab === 'action'
@@ -642,6 +681,139 @@ export default function App() {
           </nav>
 
           <div className="w-full h-px bg-[#5C3A1D]/20 mb-5" />
+
+          {/* ======================================================== */}
+          {/* TAB 0 : TEST GÉNÉRIQUE RAPIDE (SANS SE PRENDRE LA TÊTE) */}
+          {/* ======================================================== */}
+          {activeTab === 'generic' && (
+            <div className="space-y-4">
+              <div className="p-3 bg-amber-50/70 border border-amber-900/20 rounded text-xs text-stone-700">
+                <span className="font-bold text-[#6B1717]">Lanceur Universel Immédiat :</span> Choisissez vos paramètres de base (Compétence, Difficulté/Attitude, Avantage, Désavantage, Malus de santé) et lancez le dé directement pour un résultat instantané synchronisé.
+              </div>
+
+              {/* CONTROLS GRID */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                {/* RANG DE COMPÉTENCE */}
+                <div>
+                  <label className="block text-[11px] font-cinzel font-bold tracking-wider text-stone-800 mb-1">
+                    RANG DE COMPÉTENCE :
+                  </label>
+                  <select
+                    value={genericRank}
+                    onChange={(e) => setGenericRank(Number(e.target.value) as SkillRank)}
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                  >
+                    {SKILL_RANKS.map((r) => (
+                      <option key={r.rank} value={r.rank}>
+                        Rang {r.rank} : {r.label} (+{r.bonus})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* DIFFICULTÉ / ATTITUDE */}
+                <div>
+                  <label className="block text-[11px] font-cinzel font-bold tracking-wider text-stone-800 mb-1">
+                    DIFFICULTÉ / ATTITUDE :
+                  </label>
+                  <select
+                    value={genericDiffOrAttitude}
+                    onChange={(e) => setGenericDiffOrAttitude(Number(e.target.value))}
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                  >
+                    <option value={2}>Triviale / Favorable (+2)</option>
+                    <option value={1}>Facile / Amicale (+1)</option>
+                    <option value={0}>Modérée / Neutre (0)</option>
+                    <option value={-1}>Difficile / Réticente (-1)</option>
+                    <option value={-2}>Extrême / Hostile (-2)</option>
+                    <option value={-3}>Cauchemardesque (-3)</option>
+                  </select>
+                </div>
+
+                {/* AVANTAGE */}
+                <div>
+                  <label className="block text-[11px] font-cinzel font-bold tracking-wider text-stone-800 mb-1">
+                    AVANTAGE :
+                  </label>
+                  <select
+                    value={genericAdvantage}
+                    onChange={(e) => setGenericAdvantage(Number(e.target.value) as AdvantageType)}
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                  >
+                    <option value={0}>Aucun (0)</option>
+                    <option value={1}>Mineur (+1)</option>
+                    <option value={2}>Majeur (+2)</option>
+                  </select>
+                </div>
+
+                {/* DÉSAVANTAGE */}
+                <div>
+                  <label className="block text-[11px] font-cinzel font-bold tracking-wider text-stone-800 mb-1">
+                    DÉSAVANTAGE :
+                  </label>
+                  <select
+                    value={genericDisadvantage}
+                    onChange={(e) => setGenericDisadvantage(Number(e.target.value) as DisadvantageType)}
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                  >
+                    <option value={0}>Aucun (0)</option>
+                    <option value={1}>Mineur (-1)</option>
+                    <option value={2}>Majeur (-2)</option>
+                  </select>
+                </div>
+
+                {/* MALUS DE SANTÉ (BASE 0) */}
+                <div>
+                  <label className="block text-[11px] font-cinzel font-bold tracking-wider text-stone-800 mb-1">
+                    MALUS DE SANTÉ :
+                  </label>
+                  <select
+                    value={genericHealthPenalty}
+                    onChange={(e) => setGenericHealthPenalty(Number(e.target.value))}
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                  >
+                    <option value={0}>Base (0) — Indemne / Éprouvé</option>
+                    <option value={-1}>Blessé (-1)</option>
+                    <option value={-2}>Grièvement blessé (-2)</option>
+                    <option value={-3}>Hors de combat (-3)</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* MODIFIER BREAKDOWN & ESTIMATE */}
+              <div className="p-3 bg-[#FAF7EE] border border-stone-300 text-xs text-stone-700 space-y-1">
+                <div>
+                  <strong>Modificateur de situation total :</strong>{' '}
+                  <span className="font-mono font-bold text-sm text-[#6B1717]">
+                    {formatMod(genericTotalModifier)}
+                  </span>{' '}
+                  (Compétence {formatMod(genericRank)}, Diff/Att {formatMod(genericDiffOrAttitude)}, Avantage {formatMod(genericAdvantage)}, Désavantage {formatMod(-genericDisadvantage)}, Santé {formatMod(genericHealthPenalty)})
+                </div>
+                <div>
+                  <strong>Plancher garanti au pire résultat (D8 = 1) :</strong>{' '}
+                  <span className={DEGREE_INFO[genericGuaranteedFloor].colorClass}>
+                    {DEGREE_INFO[genericGuaranteedFloor].label}
+                  </span>
+                </div>
+              </div>
+
+              {/* ACTION BUTTON */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
+                <div className="text-xs text-stone-600 italic">
+                  Tirage calculé selon la table D8 officielle : ≤1 Critique, 2-3 Échec, 4-6 Ambivalent, 7-8 Réussite, 9+ Réussite majeure.
+                </div>
+
+                <button
+                  onClick={() => executeRoll('Test Générique Rapide', genericTotalModifier, 'generic')}
+                  disabled={isRolling}
+                  className="px-6 py-3 bg-[#6B1717] hover:bg-[#521111] text-white font-cinzel font-bold text-sm tracking-wider shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                >
+                  <Dices className={`w-5 h-5 ${isRolling ? 'animate-spin' : ''}`} />
+                  <span>{isRolling ? 'LANCEMENT EN COURS...' : 'LANCER LE TEST GÉNÉRIQUE'}</span>
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* ======================================================== */}
           {/* TAB 1 : TEST D'ACTION / PHYSIQUE (VERIFIED OFFICIAL D8) */}
