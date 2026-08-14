@@ -1,0 +1,8 @@
+{
+  "name": "Brigades Mobiles 1910 - Lanceur D8",
+  "description": "Lanceur de dés officiel et assistant de jeu dédié à Brigades Mobiles 1910 (Système D8).",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

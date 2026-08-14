@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-playfair: 'Playfair Display', serif;
+  --font-cinzel: 'Cinzel', serif;
+  --font-typewriter: 'Special Elite', monospace;
+  --font-serif-text: 'Newsreader', serif;
+}
+
+/* Custom 1910 styling utilities */
+.font-typewriter {
+  font-family: 'Special Elite', monospace;
+}
+
+.font-cinzel {
+  font-family: 'Cinzel', serif;
+}
+
+.font-newsreader {
+  font-family: 'Newsreader', serif;
+}
+
+.font-playfair {
+  font-family: 'Playfair Display', serif;
+}
+
+/* Chalkboard texture for Brigade ardoise */
+.bg-chalkboard {
+  background-color: #1e252b;
+  background-image: radial-gradient(#2c3840 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Vintage paper subtle texture */
+.bg-vintage-paper {
+  background-color: #f7f3e8;
+  background-image: radial-gradient(#eadbc5 0.75px, transparent 0.75px);
+  background-size: 16px 16px;
+}
+
+.dark .bg-vintage-paper {
+  background-color: #13171f;
+  background-image: radial-gradient(#1e2433 0.75px, transparent 0.75px);
+  background-size: 16px 16px;
+}
+
+/* D8 3D Roll Spin Animation */
+.animate-d8-roll {
+  animation: d8Roll 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes d8Roll {
+  0% {
+    transform: scale(0.6) rotate(-180deg);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.15) rotate(90deg);
+    opacity: 0.85;
+  }
+  75% {
+    transform: scale(0.95) rotate(-15deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.animate-shake {
+  animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-2px, 0, 0) rotate(-1deg); }
+  20%, 80% { transform: translate3d(4px, 0, 0) rotate(1deg); }
+  30%, 50%, 70% { transform: translate3d(-6px, 0, 0) rotate(-2deg); }
+  40%, 60% { transform: translate3d(6px, 0, 0) rotate(2deg); }
+}

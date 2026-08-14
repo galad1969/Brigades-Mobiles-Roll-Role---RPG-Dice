@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <title>Remix Roll & Role</title>
+    <script>
+      // Single Page Apps for GitHub Pages
+      // Redirects 404 paths to root hash router
+      const pathSegments = window.location.pathname.split('/').filter(Boolean);
+      // Keep repo name if hosted in a subfolder (e.g. username.github.io/repo-name)
+      const repoName = pathSegments.length > 0 ? '/' + pathSegments[0] : '';
+      const redirectUrl = window.location.origin + repoName + '/#' + window.location.pathname.replace(repoName, '') + window.location.search;
+      window.location.replace(redirectUrl);
+    </script>
+  </head>
+  <body>
+    <p>Redirection en cours vers l'application...</p>
+  </body>
+</html>
