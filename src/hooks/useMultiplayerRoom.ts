@@ -30,7 +30,9 @@ export function useMultiplayerRoom(
           };
         }
       }
-    } catch (e) {}
+    } catch (e) {
+      console.warn('Failed to parse saved player profile from localStorage', e);
+    }
     return {
       name: generateRandomPlayerName(),
       role: 'player',
@@ -76,7 +78,9 @@ export function useMultiplayerRoom(
   useEffect(() => {
     try {
       localStorage.setItem('bm1910_player_profile', JSON.stringify(profile));
-    } catch (e) {}
+    } catch (e) {
+      console.warn('Failed to save player profile to localStorage', e);
+    }
   }, [profile]);
 
   const updateProfile = useCallback((updates: Partial<UserProfile>) => {
@@ -104,7 +108,9 @@ export function useMultiplayerRoom(
     if (roomRef.current) {
       try {
         roomRef.current.leave();
-      } catch (e) {}
+      } catch (e) {
+        console.warn('Error while leaving room', e);
+      }
       roomRef.current = null;
     }
     presenceActionRef.current = null;
@@ -139,7 +145,9 @@ export function useMultiplayerRoom(
     if (roomRef.current) {
       try {
         roomRef.current.leave();
-      } catch (e) {}
+      } catch (e) {
+        console.warn('Error leaving prior room before joining new one', e);
+      }
       roomRef.current = null;
     }
 

@@ -54,16 +54,9 @@ import {
   XP_CHECKLIST,
   SKILL_XP_COSTS,
 } from './data/rulesData';
+import { determineDegree, calculateInjuryModifier } from './utils/diceRules';
 
 type TabKey = 'generic' | 'action' | 'social' | 'pursuit' | 'combat' | 'end_case';
-
-function determineDegree(total: number): DegreeResult {
-  if (total <= 1) return 'echec_critique';
-  if (total <= 3) return 'echec';
-  if (total <= 6) return 'ambivalent';
-  if (total <= 8) return 'reussite';
-  return 'reussite_majeure';
-}
 
 const DEGREE_INFO: Record<DegreeResult, { label: string; summary: string; colorClass: string }> = {
   echec_critique: {
@@ -108,7 +101,9 @@ export default function App() {
     try {
       const saved = localStorage.getItem('bm1910_roll_history_v6');
       if (saved) return JSON.parse(saved);
-    } catch (e) {}
+    } catch (e) {
+      console.warn('Failed to load roll history from localStorage', e);
+    }
     return [];
   });
   const [lastRoll, setLastRoll] = useState<RollHistoryEntry | null>(null);
@@ -119,7 +114,9 @@ export default function App() {
   useEffect(() => {
     try {
       localStorage.setItem('bm1910_roll_history_v6', JSON.stringify(history.slice(0, 30)));
-    } catch (e) {}
+    } catch (e) {
+      console.warn('Failed to save roll history to localStorage', e);
+    }
   }, [history]);
 
   // Handle remote roll from Multiplayer P2P
@@ -216,16 +213,7 @@ export default function App() {
   // 4 (Grièvement blessé): -2 on ALL actions
   // 5 (Hors de combat): -3 on ALL actions
   const isPhysicalAction = ['physique', 'mecanique'].includes(actionSceneType);
-  let actionInjuryPenalty = 0;
-  if (actionInjury === 2) {
-    actionInjuryPenalty = isPhysicalAction ? -1 : 0;
-  } else if (actionInjury === 3) {
-    actionInjuryPenalty = -1;
-  } else if (actionInjury === 4) {
-    actionInjuryPenalty = -2;
-  } else if (actionInjury === 5) {
-    actionInjuryPenalty = -3;
-  }
+  const actionInjuryPenalty = calculateInjuryModifier(actionInjury, isPhysicalAction);
 
   const actionDifficultyMod = DIFFICULTIES[actionDifficultyTier].modifier;
   const actionTotalModifier =
@@ -251,10 +239,7 @@ export default function App() {
   const [socialInjury, setSocialInjury] = useState<InjuryStage>(1);
   const [socialPrivilegeBonus, setSocialPrivilegeBonus] = useState<number>(0);
 
-  let socialInjuryPenalty = 0;
-  if (socialInjury === 3) socialInjuryPenalty = -1;
-  else if (socialInjury === 4) socialInjuryPenalty = -2;
-  else if (socialInjury === 5) socialInjuryPenalty = -3;
+  const socialInjuryPenalty = calculateInjuryModifier(socialInjury, false);
 
   const socialTotalModifier =
     socialRank +
@@ -282,10 +267,7 @@ export default function App() {
   const [pursuitProgress, setPursuitProgress] = useState<number>(1); // 1 = Contact visuel, 2 = Talonnement, 3 = Interpellation
   const [drawnComplication, setDrawnComplication] = useState<string | null>(null);
 
-  let pursuitInjuryPenalty = 0;
-  if (pursuitInjury === 2 || pursuitInjury === 3) pursuitInjuryPenalty = -1;
-  else if (pursuitInjury === 4) pursuitInjuryPenalty = -2;
-  else if (pursuitInjury === 5) pursuitInjuryPenalty = -3;
+  const pursuitInjuryPenalty = calculateInjuryModifier(pursuitInjury, true);
 
   const pursuitTotalModifier =
     pursuitRank +
@@ -309,10 +291,7 @@ export default function App() {
   const [combatDisadvantage, setCombatDisadvantage] = useState<DisadvantageType>(0);
   const [combatInjury, setCombatInjury] = useState<InjuryStage>(1);
 
-  let combatInjuryPenalty = 0;
-  if (combatInjury === 2 || combatInjury === 3) combatInjuryPenalty = -1;
-  else if (combatInjury === 4) combatInjuryPenalty = -2;
-  else if (combatInjury === 5) combatInjuryPenalty = -3;
+  const combatInjuryPenalty = calculateInjuryModifier(combatInjury, true);
 
   const combatTotalModifier =
     combatRank +
@@ -387,64 +366,88 @@ export default function App() {
         else if (degree === 'echec_critique') dmgTaken = oppW.damageDoubled;
       }
 
+      // Compute category-specific snapshot attributes cleanly
+      let rollRank: SkillRank = actionRank;
+      let rollDifficultyMod = 0;
+      let rollRawAdvantage: AdvantageType = 0;
+      let rollAppliedAdvantage: AdvantageType = 0;
+      let rollRawDisadvantage: DisadvantageType = 0;
+      let rollAppliedDisadvantage: DisadvantageType = 0;
+      let rollHalfRuleApplied = false;
+      let rollInjuryStage: InjuryStage = 1;
+      let rollInjuryMod = 0;
+
+      if (categoryKey === 'generic') {
+        rollRank = genericRank;
+        rollDifficultyMod = genericDiffOrAttitude;
+        rollRawAdvantage = genericAdvantage;
+        rollAppliedAdvantage = genericAdvantage;
+        rollRawDisadvantage = genericDisadvantage;
+        rollAppliedDisadvantage = genericDisadvantage;
+        rollHalfRuleApplied = false;
+        rollInjuryStage = 1;
+        rollInjuryMod = genericHealthPenalty;
+      } else if (categoryKey === 'action') {
+        rollRank = actionRank;
+        rollDifficultyMod = actionDifficultyMod;
+        rollRawAdvantage = actionAdvantage;
+        rollAppliedAdvantage = appliedActionAdvantage;
+        rollRawDisadvantage = actionDisadvantage;
+        rollAppliedDisadvantage = actionDisadvantage;
+        rollHalfRuleApplied = isActionExtremeOrNightmare && actionAdvantage > 0;
+        rollInjuryStage = actionInjury;
+        rollInjuryMod = actionInjuryPenalty;
+      } else if (categoryKey === 'social') {
+        rollRank = socialRank;
+        rollDifficultyMod = socialAttitude + socialDemand;
+        rollRawAdvantage = socialAdvantage;
+        rollAppliedAdvantage = socialAdvantage;
+        rollRawDisadvantage = socialDisadvantage;
+        rollAppliedDisadvantage = socialDisadvantage;
+        rollHalfRuleApplied = false;
+        rollInjuryStage = socialInjury;
+        rollInjuryMod = socialInjuryPenalty;
+      } else if (categoryKey === 'pursuit') {
+        rollRank = pursuitRank;
+        rollDifficultyMod = pursuitDistance + pursuitOpponentSpeed + pursuitEnvironment;
+        rollRawAdvantage = pursuitAdvantage;
+        rollAppliedAdvantage = pursuitAdvantage;
+        rollRawDisadvantage = pursuitDisadvantage;
+        rollAppliedDisadvantage = pursuitDisadvantage;
+        rollHalfRuleApplied = false;
+        rollInjuryStage = pursuitInjury;
+        rollInjuryMod = pursuitInjuryPenalty;
+      } else if (categoryKey === 'combat') {
+        rollRank = combatRank;
+        rollDifficultyMod = combatOpponentPhysique;
+        rollRawAdvantage = combatAdvantage;
+        rollAppliedAdvantage = combatAdvantage;
+        rollRawDisadvantage = combatDisadvantage;
+        rollAppliedDisadvantage = combatDisadvantage;
+        rollHalfRuleApplied = false;
+        rollInjuryStage = combatInjury;
+        rollInjuryMod = combatInjuryPenalty;
+      }
+
       const rollEntry: RollHistoryEntry = {
         id: crypto.randomUUID(),
         timestamp: Date.now(),
         category: categoryKey,
         actionName: categoryName,
-        rank:
-          categoryKey === 'generic'
-            ? genericRank
-            : categoryKey === 'social'
-            ? socialRank
-            : categoryKey === 'pursuit'
-            ? pursuitRank
-            : categoryKey === 'combat'
-            ? combatRank
-            : actionRank,
+        rank: rollRank,
         d8Result,
         modifierTotal: modifier,
         finalTotal,
         degree,
         guaranteedFloor: determineDegree(1 + modifier),
-        difficultyMod: categoryKey === 'generic' ? genericDiffOrAttitude : actionDifficultyMod,
-        rawAdvantage:
-          categoryKey === 'generic'
-            ? genericAdvantage
-            : categoryKey === 'social'
-            ? socialAdvantage
-            : categoryKey === 'pursuit'
-            ? pursuitAdvantage
-            : categoryKey === 'combat'
-            ? combatAdvantage
-            : actionAdvantage,
-        appliedAdvantage:
-          categoryKey === 'generic'
-            ? genericAdvantage
-            : categoryKey === 'action'
-            ? appliedActionAdvantage
-            : actionAdvantage,
-        rawDisadvantage:
-          categoryKey === 'generic'
-            ? genericDisadvantage
-            : categoryKey === 'social'
-            ? socialDisadvantage
-            : categoryKey === 'pursuit'
-            ? pursuitDisadvantage
-            : categoryKey === 'combat'
-            ? combatDisadvantage
-            : actionDisadvantage,
-        appliedDisadvantage: categoryKey === 'generic' ? genericDisadvantage : actionDisadvantage,
-        halfRuleApplied: isActionExtremeOrNightmare && actionAdvantage > 0,
-        injuryStage:
-          categoryKey === 'social'
-            ? socialInjury
-            : categoryKey === 'pursuit'
-            ? pursuitInjury
-            : categoryKey === 'combat'
-            ? combatInjury
-            : actionInjury,
-        injuryMod: categoryKey === 'generic' ? genericHealthPenalty : actionInjuryPenalty,
+        difficultyMod: rollDifficultyMod,
+        rawAdvantage: rollRawAdvantage,
+        appliedAdvantage: rollAppliedAdvantage,
+        rawDisadvantage: rollRawDisadvantage,
+        appliedDisadvantage: rollAppliedDisadvantage,
+        halfRuleApplied: rollHalfRuleApplied,
+        injuryStage: rollInjuryStage,
+        injuryMod: rollInjuryMod,
         characterWeapon: categoryKey === 'combat' ? combatCharWeapon : undefined,
         opponentWeapon: categoryKey === 'combat' ? combatOppWeapon : undefined,
         damageInflicted: dmgInflicted,
