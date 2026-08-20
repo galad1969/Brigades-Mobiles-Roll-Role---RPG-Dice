@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BrigadeBoard } from '../types';
 import { TIME_COST_ACTIONS } from '../data/rulesData';
-import { Calendar, FileText, AlertTriangle, X, Clock, Plus, Trash2, CheckSquare } from 'lucide-react';
+import { Calendar, AlertTriangle, X, Clock, Trash2, CheckSquare } from 'lucide-react';
 
 interface BrigadeBoardModalProps {
   isOpen: boolean;
@@ -24,42 +24,48 @@ export function BrigadeBoardModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-xs font-serif">
-      <div className="bg-[#FAF7EE] border-4 border-[#5C3A1D] rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl p-6 sm:p-8 space-y-6 text-[#2B231D]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs font-serif animate-in fade-in duration-200">
+      <div className="bg-[#121820] artdeco-frame border-2 border-[#c5a059] max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-[0_0_30px_rgba(0,0,0,0.8)] p-6 sm:p-8 space-y-6 text-[#f4ecd8] relative">
         
+        {/* CORNERS */}
+        <div className="artdeco-corner-tl" />
+        <div className="artdeco-corner-tr" />
+        <div className="artdeco-corner-bl" />
+        <div className="artdeco-corner-br" />
+
         {/* Header */}
-        <div className="flex items-center justify-between border-b-2 border-[#78350F]/30 pb-3">
+        <div className="flex items-center justify-between border-b border-[#c5a059]/40 pb-3">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-[#6B1717] text-amber-100 rounded shadow-sm">
+            <div className="p-2.5 bg-[#1a232f] border border-[#dfba73] text-[#dfba73] shadow-xs">
               <Calendar className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-xl sm:text-2xl font-cinzel font-bold text-[#6B1717]">
+              <h2 className="text-xl sm:text-2xl font-cinzel-deco font-bold text-gold-gradient">
                 Tableau de la Brigade (L'Ardoise)
               </h2>
-              <p className="text-xs italic text-stone-600">
+              <p className="text-xs text-[#a69d8d] font-marcellus">
                 « Une ardoise en bout de table : les faits établis, les hypothèses et les journées restantes. » (Chapitre 20.11)
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-stone-500 hover:bg-stone-200 rounded transition-colors cursor-pointer"
+            className="p-1.5 hover:bg-[#1a232f] text-[#dfba73] border border-transparent hover:border-[#c5a059]/50 transition-colors cursor-pointer"
           >
             <X className="w-6 h-6" />
           </button>
         </div>
 
         {/* Days remaining banner */}
-        <div className="p-4 bg-white/80 rounded border border-[#78350F]/30 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs">
+        <div className="p-4 bg-[#0d1117] border border-[#c5a059]/50 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-md">
           <div className="space-y-1.5 flex-1">
             <div className="flex items-center justify-between gap-2">
-              <span className="text-[11px] font-cinzel font-bold text-[#78350F] uppercase tracking-wider block">
+              <span className="text-[11px] font-cinzel font-bold text-[#dfba73] uppercase tracking-widest block">
                 Délai imparti & Pression du parquet (1 à 6+ Jours)
               </span>
               {isGM && (
-                <div className="flex items-center gap-1 text-[11px] font-cinzel">
-                  <span className="text-stone-600">Durée totale de l'enquête :</span>
+                <div className="flex items-center gap-1.5 text-[11px] font-cinzel">
+                  <span className="text-[#a69d8d]">Durée totale :</span>
                   <select
                     value={board.totalDays}
                     onChange={(e) => {
@@ -70,10 +76,10 @@ export function BrigadeBoardModal({
                         remainingDays: Math.min(board.remainingDays, newTotal),
                       });
                     }}
-                    className="bg-[#FAF7EE] border border-stone-400 px-1.5 py-0.5 rounded font-bold text-[#6B1717] cursor-pointer"
+                    className="bg-[#161d26] border border-[#c5a059]/50 px-2 py-0.5 font-bold text-[#dfba73] cursor-pointer focus:outline-none"
                   >
                     {[1, 2, 3, 4, 5, 6, 7, 8].map((d) => (
-                      <option key={d} value={d}>
+                      <option key={d} value={d} className="bg-[#121820] text-[#f4ecd8]">
                         {d} {d > 1 ? 'Journées' : 'Journée'} {d === 4 ? '(Standard)' : d === 6 ? '(Affaire complexe)' : ''}
                       </option>
                     ))}
@@ -84,25 +90,25 @@ export function BrigadeBoardModal({
             
             {isGM ? (
               <div className="flex items-center gap-2">
-                <span className="text-xs text-stone-700 font-bold whitespace-nowrap">Échéance :</span>
+                <span className="text-xs text-[#dfba73] font-cinzel font-bold whitespace-nowrap uppercase">Échéance :</span>
                 <input
                   type="text"
                   value={board.deadlineConsequence}
                   onChange={(e) => onUpdateBoard({ ...board, deadlineConsequence: e.target.value })}
                   placeholder="Conséquence fatidique de l'expiration du délai..."
-                  className="flex-1 bg-[#FAF7EE] border border-stone-300 px-2 py-1 text-xs italic text-stone-800 focus:outline-none focus:border-[#6B1717]"
+                  className="flex-1 bg-[#161d26] border border-[#c5a059]/40 px-2.5 py-1 text-xs italic text-[#f4ecd8] focus:outline-none focus:border-[#dfba73]"
                 />
               </div>
             ) : (
-              <div className="text-xs sm:text-sm italic text-stone-700">
+              <div className="text-xs sm:text-sm italic text-[#d1c7b7] font-marcellus">
                 Échéance fatidique : « {board.deadlineConsequence} »
               </div>
             )}
           </div>
 
-          <div className="flex items-center gap-2.5 bg-[#FAF7EE] p-2.5 rounded border border-stone-400 self-start md:self-auto">
-            <Clock className="w-4 h-4 text-[#6B1717]" />
-            <span className="text-xs font-cinzel font-bold text-stone-800">Compteur :</span>
+          <div className="flex items-center gap-2.5 bg-[#161d26] p-2.5 border border-[#c5a059]/40 self-start md:self-auto">
+            <Clock className="w-4 h-4 text-[#dfba73]" />
+            <span className="text-xs font-cinzel font-bold text-[#f4ecd8] uppercase tracking-wider">Compteur :</span>
             {isGM && (
               <button
                 onClick={() =>
@@ -111,17 +117,17 @@ export function BrigadeBoardModal({
                     remainingDays: Math.max(0, board.remainingDays - 1),
                   })
                 }
-                className="w-7 h-7 bg-[#6B1717] hover:bg-[#521111] text-white rounded font-mono font-bold text-xs cursor-pointer transition-colors"
+                className="w-7 h-7 bg-[#3b1d14] hover:bg-[#521111] text-[#fed7aa] border border-[#f97316]/50 font-mono font-bold text-xs cursor-pointer transition-colors"
                 title="Consommer 1 journée d'enquête"
               >
                 -1j
               </button>
             )}
             <span
-              className={`text-lg font-mono font-bold px-3 py-0.5 rounded border ${
+              className={`text-lg font-mono font-bold px-3 py-0.5 border ${
                 board.remainingDays <= 1
-                  ? 'bg-red-700 text-white border-red-800 animate-pulse'
-                  : 'bg-white text-[#6B1717] border-stone-300'
+                  ? 'bg-[#450a0a] text-[#fecaca] border-red-500 animate-pulse'
+                  : 'bg-[#0d1117] text-[#dfba73] border-[#c5a059]/50'
               }`}
             >
               {board.remainingDays} / {board.totalDays}j
@@ -134,7 +140,7 @@ export function BrigadeBoardModal({
                     remainingDays: Math.min(board.totalDays, board.remainingDays + 1),
                   })
                 }
-                className="w-7 h-7 bg-stone-700 hover:bg-stone-800 text-white rounded font-mono font-bold text-xs cursor-pointer transition-colors"
+                className="w-7 h-7 bg-[#1a232f] hover:bg-[#253243] text-[#dfba73] border border-[#c5a059]/50 font-mono font-bold text-xs cursor-pointer transition-colors"
                 title="Rétablir 1 journée"
               >
                 +1j
@@ -147,11 +153,11 @@ export function BrigadeBoardModal({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           
           {/* Column 1: Facts */}
-          <div className="bg-white/80 p-4 rounded border border-stone-300 space-y-3 shadow-xs">
-            <div className="flex items-center gap-2 text-stone-900 border-b border-stone-200 pb-2">
-              <CheckSquare className="w-4 h-4 text-emerald-800" />
-              <h3 className="font-cinzel font-bold text-sm tracking-wide text-[#6B1717]">
-                Faits Établis & Preuves Matérielles
+          <div className="bg-[#0d1117] p-4 border border-[#c5a059]/40 space-y-3 shadow-inner">
+            <div className="flex items-center gap-2 border-b border-[#c5a059]/30 pb-2">
+              <CheckSquare className="w-4 h-4 text-emerald-400" />
+              <h3 className="font-cinzel font-bold text-sm tracking-widest text-[#dfba73] uppercase">
+                Faits Établis & Preuves
               </h3>
             </div>
             
@@ -159,9 +165,9 @@ export function BrigadeBoardModal({
               {board.facts.map((fact, idx) => (
                 <li
                   key={idx}
-                  className="p-2.5 bg-[#FAF7EE] rounded border border-stone-300 flex items-start justify-between gap-2"
+                  className="p-2.5 bg-[#161d26] border border-[#c5a059]/30 flex items-start justify-between gap-2"
                 >
-                  <span className="leading-relaxed text-stone-800">• {fact}</span>
+                  <span className="leading-relaxed text-[#f4ecd8] font-marcellus">• {fact}</span>
                   {isGM && (
                     <button
                       onClick={() =>
@@ -170,7 +176,7 @@ export function BrigadeBoardModal({
                           facts: board.facts.filter((_, i) => i !== idx),
                         })
                       }
-                      className="text-stone-400 hover:text-red-700 transition-colors p-0.5 cursor-pointer"
+                      className="text-[#a69d8d] hover:text-red-400 transition-colors p-0.5 cursor-pointer"
                       title="Supprimer"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -196,7 +202,7 @@ export function BrigadeBoardModal({
                     }
                   }}
                   placeholder="Nouvel indice ou fait vérifié..."
-                  className="flex-1 bg-[#FAF7EE] border border-stone-400 px-2.5 py-1.5 text-xs text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                  className="flex-1 bg-[#161d26] border border-[#c5a059]/40 px-2.5 py-1.5 text-xs text-[#f4ecd8] focus:outline-none focus:border-[#dfba73]"
                 />
                 <button
                   onClick={() => {
@@ -208,7 +214,7 @@ export function BrigadeBoardModal({
                       setNewFact('');
                     }
                   }}
-                  className="px-3 py-1.5 bg-[#6B1717] hover:bg-[#521111] text-white text-xs font-cinzel font-bold rounded cursor-pointer"
+                  className="px-3 py-1.5 bg-gradient-to-r from-[#997323] via-[#c5a059] to-[#997323] text-[#0d1117] text-xs font-cinzel font-bold cursor-pointer uppercase tracking-wider border border-[#f3e5ab]"
                 >
                   Ajouter
                 </button>
@@ -217,11 +223,11 @@ export function BrigadeBoardModal({
           </div>
 
           {/* Column 2: Hypotheses */}
-          <div className="bg-white/80 p-4 rounded border border-stone-300 space-y-3 shadow-xs">
-            <div className="flex items-center gap-2 text-stone-900 border-b border-stone-200 pb-2">
-              <AlertTriangle className="w-4 h-4 text-amber-700" />
-              <h3 className="font-cinzel font-bold text-sm tracking-wide text-[#78350F]">
-                Pistes & Hypothèses de Travail
+          <div className="bg-[#0d1117] p-4 border border-[#c5a059]/40 space-y-3 shadow-inner">
+            <div className="flex items-center gap-2 border-b border-[#c5a059]/30 pb-2">
+              <AlertTriangle className="w-4 h-4 text-amber-400" />
+              <h3 className="font-cinzel font-bold text-sm tracking-widest text-[#dfba73] uppercase">
+                Pistes & Hypothèses
               </h3>
             </div>
 
@@ -229,9 +235,9 @@ export function BrigadeBoardModal({
               {board.hypotheses.map((hypo, idx) => (
                 <li
                   key={idx}
-                  className="p-2.5 bg-[#FAF7EE] rounded border border-stone-300 flex items-start justify-between gap-2"
+                  className="p-2.5 bg-[#161d26] border border-[#c5a059]/30 flex items-start justify-between gap-2"
                 >
-                  <span className="leading-relaxed text-stone-800 italic">? {hypo}</span>
+                  <span className="leading-relaxed text-[#d1c7b7] font-marcellus italic">? {hypo}</span>
                   {isGM && (
                     <button
                       onClick={() =>
@@ -240,7 +246,7 @@ export function BrigadeBoardModal({
                           hypotheses: board.hypotheses.filter((_, i) => i !== idx),
                         })
                       }
-                      className="text-stone-400 hover:text-red-700 transition-colors p-0.5 cursor-pointer"
+                      className="text-[#a69d8d] hover:text-red-400 transition-colors p-0.5 cursor-pointer"
                       title="Supprimer"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -266,7 +272,7 @@ export function BrigadeBoardModal({
                     }
                   }}
                   placeholder="Nouvelle piste ou intuition..."
-                  className="flex-1 bg-[#FAF7EE] border border-stone-400 px-2.5 py-1.5 text-xs text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                  className="flex-1 bg-[#161d26] border border-[#c5a059]/40 px-2.5 py-1.5 text-xs text-[#f4ecd8] focus:outline-none focus:border-[#dfba73]"
                 />
                 <button
                   onClick={() => {
@@ -278,7 +284,7 @@ export function BrigadeBoardModal({
                       setNewHypo('');
                     }
                   }}
-                  className="px-3 py-1.5 bg-[#78350F] hover:bg-[#5C3A1D] text-white text-xs font-cinzel font-bold rounded cursor-pointer"
+                  className="px-3 py-1.5 bg-[#1a232f] hover:bg-[#253243] text-[#dfba73] border border-[#c5a059]/50 text-xs font-cinzel font-bold cursor-pointer uppercase tracking-wider"
                 >
                   Ajouter
                 </button>
@@ -289,16 +295,16 @@ export function BrigadeBoardModal({
         </div>
 
         {/* Time Cost Reference Guide */}
-        <div className="p-3.5 bg-amber-50/70 border border-[#78350F]/20 rounded text-xs space-y-2">
-          <div className="font-cinzel font-bold text-[#78350F] flex items-center gap-1.5">
+        <div className="p-3.5 bg-[#0d1117] border border-[#c5a059]/40 text-xs space-y-2">
+          <div className="font-cinzel font-bold text-[#dfba73] flex items-center gap-1.5 uppercase tracking-wider">
             <Clock className="w-3.5 h-3.5" />
             <span>Barème indicatif du temps d'enquête (Système D8) :</span>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-stone-700">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-[#d1c7b7] font-marcellus">
             {TIME_COST_ACTIONS.map((item, i) => (
-              <div key={i} className="flex justify-between border-b border-stone-200 py-0.5">
+              <div key={i} className="flex justify-between border-b border-[#c5a059]/20 py-0.5">
                 <span>{item.label}</span>
-                <span className="font-bold text-[#6B1717]">{item.days}j</span>
+                <span className="font-bold text-[#dfba73] font-mono">{item.days}j</span>
               </div>
             ))}
           </div>

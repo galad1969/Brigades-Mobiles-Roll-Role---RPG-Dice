@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Users, Crown, Shield, Share2, Check, Sparkles } from 'lucide-react';
+import { X, Users, Crown, Shield, Share2, Check } from 'lucide-react';
 import { RoomPlayer, PlayerRole } from '../types';
 
 interface PlayersListModalProps {
@@ -38,27 +38,33 @@ export const PlayersListModal: React.FC<PlayersListModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="bg-[#FAF7EE] border-4 border-[#5C3A1D] rounded-xl max-w-md w-full p-6 sm:p-8 shadow-2xl space-y-5 text-[#2B231D] font-serif">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-in fade-in duration-200">
+      <div className="bg-[#121820] artdeco-frame border-2 border-[#c5a059] max-w-md w-full p-6 sm:p-8 shadow-[0_0_30px_rgba(0,0,0,0.8)] space-y-5 text-[#f4ecd8] font-serif relative">
         
+        {/* CORNERS */}
+        <div className="artdeco-corner-tl" />
+        <div className="artdeco-corner-tr" />
+        <div className="artdeco-corner-bl" />
+        <div className="artdeco-corner-br" />
+
         {/* HEADER */}
-        <div className="flex items-center justify-between pb-3 border-b-2 border-[#78350F]/30">
+        <div className="flex items-center justify-between pb-3 border-b border-[#c5a059]/40">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-[#6B1717] text-amber-100 rounded shadow-sm">
+            <div className="p-2.5 bg-[#1a232f] light:bg-[#f2e7d3] border border-[#dfba73] light:border-[#8c6010] text-[#dfba73] light:text-[#523400] shadow-xs">
               <Users size={22} />
             </div>
             <div>
-              <h3 className="text-xl font-cinzel font-bold text-[#6B1717]">
+              <h3 className="text-xl font-cinzel-deco font-bold text-gold-gradient">
                 Membres de la Brigade
               </h3>
-              <p className="text-xs text-stone-600">
-                Table : <span className="font-bold text-[#78350F] font-mono">{roomId}</span>
+              <p className="text-xs text-[#a69d8d] font-marcellus">
+                Table : <span className="font-bold text-[#dfba73] font-mono">{roomId}</span>
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 hover:bg-stone-200 text-stone-600 rounded transition-colors cursor-pointer"
+            className="p-1.5 hover:bg-[#1a232f] text-[#dfba73] border border-transparent hover:border-[#c5a059]/50 transition-colors cursor-pointer"
           >
             <X size={20} />
           </button>
@@ -69,31 +75,31 @@ export const PlayersListModal: React.FC<PlayersListModalProps> = ({
           {players.map((p) => (
             <div
               key={p.peerId}
-              className={`p-3 rounded border flex items-center justify-between transition-all ${
+              className={`p-3 border flex items-center justify-between transition-all rounded-md ${
                 p.isSelf
-                  ? 'bg-amber-50/80 border-[#6B1717] shadow-xs'
-                  : 'bg-white/80 border-stone-300'
+                  ? 'bg-[#1a232f] border-[#dfba73] shadow-xs'
+                  : 'bg-[#0d1117] border-[#c5a059]/30'
               }`}
             >
               <div className="flex items-center gap-3">
                 <div
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold font-mono text-xs shadow-xs relative"
-                  style={{ backgroundColor: p.color }}
+                  className="w-8 h-8 border-2 border-[#c5a059] bg-[#121820] rounded flex items-center justify-center text-[#dfba73] font-bold font-cinzel text-xs relative shrink-0"
+                  style={{ borderColor: p.color || '#c5a059' }}
                 >
-                  {p.role === 'gm' ? <Crown size={14} /> : p.name.charAt(0).toUpperCase()}
-                  <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 border border-white rounded-full" />
+                  {p.role === 'gm' ? <Crown size={14} className="text-[#dfba73]" /> : p.name.charAt(0).toUpperCase()}
+                  <span className="absolute -bottom-1 -right-1 w-2.5 h-2.5 bg-emerald-500 border border-[#121820] rounded-full" />
                 </div>
                 <div>
-                  <div className="font-cinzel font-bold text-xs sm:text-sm text-stone-900 flex items-center gap-1.5">
+                  <div className="font-cinzel font-bold text-xs sm:text-sm text-[#f4ecd8] flex items-center gap-2">
                     <span>{p.name}</span>
                     {p.isSelf && (
-                      <span className="text-[10px] bg-stone-200 text-stone-700 px-1.5 py-0.2 rounded font-sans">
+                      <span className="text-[10px] bg-[#121820] text-[#dfba73] border border-[#c5a059]/60 px-1.5 py-0.5 uppercase font-mono font-bold tracking-wider rounded">
                         Vous
                       </span>
                     )}
                   </div>
-                  <div className="text-[11px] text-stone-600 italic">
-                    {p.role === 'gm' ? 'Meneur de Jeu (MJ)' : 'Inspecteur de la Brigade'}
+                  <div className="text-[11px] text-[#a69d8d] font-marcellus">
+                    {p.role === 'gm' ? 'Meneur de Jeu (MJ)' : 'Inspecteur de la Sûreté'}
                   </div>
                 </div>
               </div>
@@ -101,23 +107,23 @@ export const PlayersListModal: React.FC<PlayersListModalProps> = ({
               {p.isSelf ? (
                 <button
                   onClick={() => onUpdateRole(p.role === 'gm' ? 'player' : 'gm')}
-                  className="px-2 py-1 text-[11px] font-cinzel font-bold border border-stone-400 bg-stone-100 hover:bg-stone-200 rounded cursor-pointer transition-colors"
+                  className="px-2.5 py-1.5 text-[11px] font-cinzel font-bold border border-[#c5a059]/60 bg-[#161d26] hover:bg-[#253243] text-[#dfba73] cursor-pointer transition-colors uppercase tracking-wider rounded shadow-xs"
                   title="Basculer de rôle"
                 >
                   Passer {p.role === 'gm' ? 'Joueur' : 'MJ'}
                 </button>
               ) : (
-                <span className="text-[11px] text-stone-500 font-mono">En direct</span>
+                <span className="text-[11px] text-emerald-400 font-mono font-bold">En direct</span>
               )}
             </div>
           ))}
         </div>
 
         {/* SHARE LINK BUTTON */}
-        <div className="pt-2 border-t border-[#78350F]/20 flex gap-2">
+        <div className="pt-2 border-t border-[#c5a059]/40 flex gap-2">
           <button
             onClick={handleCopyLink}
-            className="flex-1 py-2.5 bg-[#6B1717] hover:bg-[#521111] text-white font-cinzel font-bold text-xs sm:text-sm uppercase tracking-wider rounded transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer"
+            className="flex-1 py-2.5 bg-gradient-to-r from-[#997323] via-[#c5a059] to-[#997323] hover:brightness-110 text-[#0d1117] font-cinzel font-bold text-xs sm:text-sm uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer border border-[#f3e5ab] rounded"
           >
             {copied ? <Check size={16} /> : <Share2 size={16} />}
             <span>{copied ? 'Lien copié dans le presse-papier !' : "Copier le Lien d'invitation"}</span>

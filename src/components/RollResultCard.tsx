@@ -39,254 +39,180 @@ export const RollResultCard: React.FC<RollResultCardProps> = ({
     return (
       <div
         id={`roll-entry-${entry.id}`}
-        className="p-5 bg-stone-100 dark:bg-stone-900 rounded-lg border-2 border-dashed border-stone-400 dark:border-stone-700 font-typewriter text-stone-700 dark:text-stone-300"
+        className="p-4 bg-[#121820] rounded-md border border-dashed border-[#c5a059]/60 font-typewriter text-[#d1c7b7]"
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span
-              className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: entry.author?.color || '#78350f' }}
+              className="w-3 h-3 rounded-full border border-[#c5a059]"
+              style={{ backgroundColor: entry.author?.color || '#c5a059' }}
             />
-            <span className="font-bold">{entry.author?.name || 'Meneur de Jeu'}</span>
-            <span className="text-xs px-2 py-0.5 bg-amber-200 dark:bg-amber-900/60 rounded text-amber-900 dark:text-amber-200 font-sans">
-              Jet Secret
+            <span className="font-bold text-[#f4ecd8]">{entry.author?.name || 'Meneur de Jeu'}</span>
+            <span className="text-xs px-2 py-0.5 bg-[#251f16] border border-[#c5a059]/60 rounded text-[#dfba73] font-cinzel">
+              Jet Secret MJ
             </span>
           </div>
-          <span className="text-xs opacity-60">
+          <span className="text-xs text-[#a69d8d]">
             {new Date(entry.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
           </span>
         </div>
-        <p className="mt-3 italic text-sm">
-          [Confidentiel Sûreté — Résultat masqué pour les agents non autorisés]
+        <p className="mt-2 italic text-xs text-[#a69d8d]">
+          [Confidentiel Sûreté — Résultat masqué pour les inspecteurs de terrain]
         </p>
       </div>
     );
   }
 
   const categoryIcons = {
-    standard: <Scroll className="w-4 h-4 text-amber-800 dark:text-amber-400" />,
-    social: <MessageSquare className="w-4 h-4 text-blue-800 dark:text-blue-400" />,
-    combat: <Swords className="w-4 h-4 text-red-800 dark:text-red-400" />,
-    poursuite: <Footprints className="w-4 h-4 text-emerald-800 dark:text-emerald-400" />,
-    danger_mort: <Crosshair className="w-4 h-4 text-purple-800 dark:text-purple-400" />,
+    generic: <Scroll className="w-3.5 h-3.5 text-[#dfba73]" />,
+    standard: <Scroll className="w-3.5 h-3.5 text-[#dfba73]" />,
+    social: <MessageSquare className="w-3.5 h-3.5 text-[#60a5fa]" />,
+    combat: <Swords className="w-3.5 h-3.5 text-[#f87171]" />,
+    poursuite: <Footprints className="w-3.5 h-3.5 text-[#4ade80]" />,
+    danger_mort: <Crosshair className="w-3.5 h-3.5 text-[#c084fc]" />,
   };
 
   const getDegreeIcon = () => {
     switch (entry.degree) {
       case 'reussite_majeure':
-        return <Award className="w-5 h-5 text-purple-700 dark:text-purple-400" />;
+        return <Award className="w-4 h-4 text-purple-400" />;
       case 'reussite':
-        return <CheckCircle2 className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />;
+        return <CheckCircle2 className="w-4 h-4 text-emerald-400" />;
       case 'ambivalent':
-        return <AlertTriangle className="w-5 h-5 text-blue-700 dark:text-blue-400" />;
+        return <AlertTriangle className="w-4 h-4 text-amber-400" />;
       case 'echec':
-        return <ShieldAlert className="w-5 h-5 text-amber-700 dark:text-amber-400" />;
+        return <ShieldAlert className="w-4 h-4 text-orange-400" />;
       case 'echec_critique':
-        return <Flame className="w-5 h-5 text-red-700 dark:text-red-400" />;
+        return <Flame className="w-4 h-4 text-red-500" />;
     }
   };
-
-  const isCostEligible = (entry.degree === 'ambivalent' || entry.degree === 'echec') && !entry.costDecision;
 
   return (
     <div
       id={`roll-entry-${entry.id}`}
-      className={`p-5 rounded-lg border-2 transition-all shadow-sm ${
+      className={`p-4 transition-all shadow-md relative border rounded-md ${
         isLatest
-          ? 'bg-amber-50/90 dark:bg-stone-900 border-[#78350f] dark:border-amber-600 shadow-md'
-          : 'bg-stone-50 dark:bg-stone-900/90 border-stone-300 dark:border-stone-700'
+          ? 'bg-[#151d27] border-[#c5a059] shadow-[0_0_15px_rgba(197,160,89,0.25)]'
+          : 'bg-[#10151c] border-[#c5a059]/40'
       }`}
     >
+      {/* Art Deco decorative corners on latest entry */}
+      {isLatest && (
+        <>
+          <div className="artdeco-corner-tl" />
+          <div className="artdeco-corner-tr" />
+          <div className="artdeco-corner-bl" />
+          <div className="artdeco-corner-br" />
+        </>
+      )}
+
       {/* Header with Author and Time */}
-      <div className="flex items-center justify-between border-b border-stone-300 dark:border-stone-800 pb-3">
+      <div className="flex items-center justify-between border-b border-[#c5a059]/30 pb-2.5">
         <div className="flex items-center gap-2">
           <span
-            className="w-3.5 h-3.5 rounded-full border border-stone-500"
-            style={{ backgroundColor: entry.author?.color || '#78350f' }}
+            className="w-3 h-3 rounded-full border border-[#c5a059] shadow-xs"
+            style={{ backgroundColor: entry.author?.color || '#c5a059' }}
           />
-          <span className="font-bold text-stone-900 dark:text-stone-100 font-cinzel text-sm">
+          <span className="font-bold text-[#f4ecd8] font-cinzel text-xs tracking-wider">
             {entry.author?.name || 'Inspecteur'}
           </span>
-          <span className="text-xs px-2 py-0.5 rounded bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 flex items-center gap-1">
-            {categoryIcons[entry.category]}
-            {entry.category.toUpperCase()}
+          <span className="text-[10px] px-2 py-0.5 bg-[#1e2837] border border-[#c5a059]/40 text-[#dfba73] flex items-center gap-1 font-cinzel uppercase tracking-wider">
+            {categoryIcons[entry.category as keyof typeof categoryIcons] || categoryIcons.standard}
+            {entry.category}
           </span>
           {entry.isSecret && (
-            <span className="text-xs px-1.5 py-0.5 bg-red-100 dark:bg-red-950 text-red-800 dark:text-red-300 rounded font-semibold">
+            <span className="text-[10px] px-1.5 py-0.5 bg-red-950/80 border border-red-700 text-red-300 font-semibold uppercase font-cinzel">
               Confidentiel
             </span>
           )}
         </div>
-        <span className="text-xs font-mono text-stone-500 dark:text-stone-400">
+        <span className="text-[11px] font-mono text-[#a69d8d]">
           {new Date(entry.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
         </span>
       </div>
 
       {/* Action Title & Main Result */}
-      <div className="mt-3 flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <div className="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h3 className="font-playfair font-bold text-lg text-stone-900 dark:text-stone-100 flex items-center gap-2">
+          <h3 className="font-cinzel font-bold text-base text-[#f4ecd8] tracking-wide flex items-center gap-2">
             {entry.actionName}
           </h3>
           {entry.activePrivilege && (
-            <p className="text-xs text-amber-800 dark:text-amber-400 font-sans mt-0.5">
-              ⭐ Privilège appliqué : <strong>{entry.activePrivilege.name} (+{entry.activePrivilege.bonus})</strong>
+            <p className="text-xs text-[#dfba73] font-marcellus mt-0.5">
+              ⭐ Privilège d'archétype : <strong>{entry.activePrivilege.name} (+{entry.activePrivilege.bonus})</strong>
             </p>
           )}
         </div>
 
-        {/* Degree Stamp Badge */}
+        {/* Degree Badge with Art Deco Stepped Look */}
         <div
-          className={`px-3.5 py-1.5 rounded-md border-2 flex items-center gap-2 font-cinzel font-bold text-sm tracking-wide ${desc.bgBadge} ${desc.colorBadge} ${desc.borderBadge}`}
+          className={`px-3 py-1.5 border flex items-center gap-2 font-cinzel font-bold text-xs tracking-widest uppercase shadow-sm ${
+            entry.degree === 'reussite_majeure'
+              ? 'bg-[#2b1b3d] text-[#e9d5ff] border-[#a855f7]'
+              : entry.degree === 'reussite'
+              ? 'bg-[#132e20] text-[#bbf7d0] border-[#22c55e]'
+              : entry.degree === 'ambivalent'
+              ? 'bg-[#3b2d13] text-[#fef08a] border-[#eab308]'
+              : entry.degree === 'echec'
+              ? 'bg-[#3b1d14] text-[#fed7aa] border-[#f97316]'
+              : 'bg-[#450a0a] text-[#fecaca] border-[#ef4444]'
+          }`}
         >
           {getDegreeIcon()}
-          <span>{desc.label.toUpperCase()}</span>
-          <span className="ml-1 px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded font-mono text-xs">
-            Total {entry.finalTotal}
+          <span>{desc.label}</span>
+          <span className="ml-1 px-1.5 py-0.5 bg-black/40 border border-white/20 font-mono text-xs font-bold text-white">
+            Score {entry.finalTotal}
           </span>
         </div>
       </div>
 
-      {/* Arithmetic Breakdown */}
-      <div className="mt-3 p-2.5 bg-stone-200/70 dark:bg-stone-800/80 rounded border border-stone-300 dark:border-stone-700 font-mono text-xs text-stone-800 dark:text-stone-300 flex flex-wrap items-center gap-x-2 gap-y-1">
-        <span className="font-semibold text-amber-900 dark:text-amber-300 font-cinzel">Calcul :</span>
-        <span className="px-1.5 py-0.5 bg-white dark:bg-stone-900 rounded font-bold border border-stone-300 dark:border-stone-700">
+      {/* Arithmetic Breakdown in elegant dark box */}
+      <div className="mt-2.5 p-2 bg-[#0d1117] border border-[#c5a059]/30 font-mono text-xs text-[#d1c7b7] flex flex-wrap items-center gap-x-2 gap-y-1">
+        <span className="font-semibold text-[#dfba73] font-cinzel">Calcul :</span>
+        <span className="px-1.5 py-0.5 bg-[#1a232f] text-[#f4ecd8] border border-[#c5a059]/40 font-bold">
           1D8 = {entry.d8Result}
         </span>
         <span>+</span>
-        <span>Rang {entry.rank}</span>
+        <span className="text-[#e6decb]">Rang {entry.rank}</span>
         {entry.difficultyMod !== 0 && (
           <>
             <span>+</span>
-            <span>Diff ({entry.difficultyMod > 0 ? `+${entry.difficultyMod}` : entry.difficultyMod})</span>
+            <span className="text-[#e6decb]">Diff/Situation {entry.difficultyMod > 0 ? `+${entry.difficultyMod}` : entry.difficultyMod}</span>
           </>
         )}
         {entry.appliedAdvantage > 0 && (
           <>
             <span>+</span>
-            <span className="text-emerald-700 dark:text-emerald-400">
-              Avantage (+{entry.appliedAdvantage}
-              {entry.halfRuleApplied ? ' ½' : ''})
-            </span>
+            <span className="text-emerald-400 font-bold">Avantage +{entry.appliedAdvantage}</span>
           </>
         )}
         {entry.appliedDisadvantage > 0 && (
           <>
-            <span>−</span>
-            <span className="text-red-700 dark:text-red-400">
-              Désavantage (−{entry.appliedDisadvantage})
-            </span>
+            <span>-</span>
+            <span className="text-amber-400 font-bold">Désavantage -{entry.appliedDisadvantage}</span>
           </>
         )}
         {entry.injuryMod !== 0 && (
           <>
-            <span>−</span>
-            <span className="text-red-700 dark:text-red-400">
-              Blessure ({entry.injuryMod})
-            </span>
+            <span>-</span>
+            <span className="text-red-400 font-bold">Blessure {entry.injuryMod}</span>
           </>
         )}
-        {entry.activePrivilege && (
-          <>
-            <span>+</span>
-            <span className="text-amber-700 dark:text-amber-400">
-              Privilège (+{entry.activePrivilege.bonus})
-            </span>
-          </>
-        )}
-        {entry.personalLink !== undefined && entry.personalLink !== 0 && (
-          <>
-            <span>+</span>
-            <span>Lien ({entry.personalLink > 0 ? `+${entry.personalLink}` : entry.personalLink})</span>
-          </>
-        )}
-        {entry.npcAttitude !== undefined && entry.npcAttitude !== 0 && (
-          <>
-            <span>+</span>
-            <span>Attitude ({entry.npcAttitude > 0 ? `+${entry.npcAttitude}` : entry.npcAttitude})</span>
-          </>
-        )}
-        <span>=</span>
-        <span className="font-bold text-sm text-stone-900 dark:text-stone-100">
-          {entry.finalTotal}
-        </span>
-        <span className="ml-auto text-stone-500 dark:text-stone-400 italic">
-          Plancher annoncé : {DEGREE_DESCRIPTIONS[entry.guaranteedFloor].label}
-        </span>
+        <span className="text-[#c5a059] font-bold">= {entry.finalTotal}</span>
       </div>
 
-      {/* Narrative Output */}
-      <div className="mt-3 p-3 bg-white/70 dark:bg-stone-950/60 rounded border border-stone-200 dark:border-stone-800 text-stone-800 dark:text-stone-200 text-sm">
-        <p className="font-newsreader italic text-base leading-relaxed">
-          « {entry.narrativeDetail} »
-        </p>
-        {entry.traceDetail && (
-          <p className="mt-2 text-xs font-mono font-medium text-amber-800 dark:text-amber-300 border-t border-stone-200 dark:border-stone-800 pt-2">
-            📌 <strong>Conséquence / Trace :</strong> {entry.traceDetail}
-          </p>
-        )}
-        {entry.category === 'combat' && (entry.damageInflicted !== undefined || entry.damageTaken !== undefined) && (
-          <div className="mt-2 pt-2 border-t border-stone-200 dark:border-stone-800 flex items-center gap-4 text-xs font-mono">
-            <span className="text-emerald-700 dark:text-emerald-400 font-bold">
-              ⚔️ Dégâts infligés à l'adversaire : {entry.damageInflicted || 0}
-            </span>
-            <span className="text-red-700 dark:text-red-400 font-bold">
-              🩸 Dégâts subis par l'inspecteur : {entry.damageTaken || 0}
-            </span>
-          </div>
-        )}
-      </div>
+      {/* Narrative Detail */}
+      <p className="mt-2.5 text-xs sm:text-sm text-[#e6decb] font-marcellus leading-relaxed border-l-2 border-[#c5a059] pl-3 py-0.5 bg-[#141b24]/50">
+        {entry.narrativeDetail}
+      </p>
 
-      {/* Cost Resolution Section (Chapter 10) */}
-      {entry.costDecision ? (
-        <div className="mt-3 p-2.5 bg-stone-200/90 dark:bg-stone-800/90 rounded border border-stone-400 dark:border-stone-700 text-xs font-mono text-stone-800 dark:text-stone-200 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Coins className="w-4 h-4 text-amber-800 dark:text-amber-400" />
-            <span>
-              {entry.costDecision.type === 'debt_token'
-                ? '📦 Choix : Jeton de dette contracté (payable plus tard selon le Meneur)'
-                : `💰 Prix payé immédiatement : ${
-                    entry.costDecision.currency
-                      ? DEBT_CURRENCIES[entry.costDecision.currency].name
-                      : 'Payé sur-le-champ'
-                  }`}
-            </span>
-          </div>
+      {/* Trace / Investigation Consequence */}
+      {entry.traceDetail && (
+        <div className="mt-2 text-xs text-[#dfba73] italic font-serif flex items-center gap-1.5 bg-[#251f16]/60 p-2 border border-[#c5a059]/30">
+          <span>⚖️</span>
+          <span><strong>Conséquence d'enquête :</strong> {entry.traceDetail}</span>
         </div>
-      ) : isCostEligible && onSelectCost ? (
-        <div className="mt-3 p-3 bg-amber-100/80 dark:bg-amber-950/40 rounded-lg border border-amber-300 dark:border-amber-800">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-cinzel font-bold text-amber-900 dark:text-amber-200 flex items-center gap-1.5">
-              <Coins className="w-4 h-4" />
-              Règlement du coût (Chapitre 10) :
-            </span>
-            <span className="text-[11px] text-amber-800/80 dark:text-amber-300/80 italic">
-              Payer maintenant ou prendre une dette
-            </span>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              id={`pay-debt-token-${entry.id}`}
-              onClick={() => onSelectCost(entry.id, 'debt_token')}
-              className="px-2.5 py-1 text-xs bg-amber-800 text-white rounded hover:bg-amber-900 transition-colors font-mono font-medium shadow-sm"
-            >
-              +1 Jeton de dette
-            </button>
-            <span className="text-xs text-stone-500 font-serif">ou payer sur le champ :</span>
-            {(['journee', 'trace', 'marque', 'piece', 'bruit'] as DebtCurrency[]).map(curr => (
-              <button
-                key={curr}
-                id={`pay-${curr}-${entry.id}`}
-                onClick={() => onSelectCost(entry.id, 'paid_now', curr)}
-                className="px-2 py-1 text-xs bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-600 rounded hover:bg-stone-100 dark:hover:bg-stone-700 text-stone-800 dark:text-stone-200 transition-colors font-sans"
-                title={DEBT_CURRENCIES[curr].desc}
-              >
-                {DEBT_CURRENCIES[curr].name}
-              </button>
-            ))}
-          </div>
-        </div>
-      ) : null}
+      )}
     </div>
   );
-}
+};

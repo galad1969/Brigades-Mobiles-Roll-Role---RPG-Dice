@@ -3,34 +3,22 @@ import {
   NPCEntry,
   BrigadeBoard,
   RoomPlayer,
-  DifficultyTier,
-  RollHistoryAuthor,
   WeaponCategory,
-  DegreeResult,
 } from '../types';
 import {
-  DIFFICULTIES,
   PURSUIT_COMPLICATIONS,
   TIME_COST_ACTIONS,
   WEAPONS,
-  DEBT_CURRENCIES,
 } from '../data/rulesData';
 import {
-  ShieldAlert,
   Users,
   Calendar,
   Footprints,
   FileText,
-  Clock,
-  Plus,
   Trash2,
   AlertTriangle,
   EyeOff,
   Dices,
-  Sparkles,
-  ChevronRight,
-  Send,
-  Skull,
 } from 'lucide-react';
 
 interface GMPanelProps {
@@ -58,7 +46,7 @@ export function GMPanel({
       id: '2',
       name: 'Le greffier du parquet',
       attitude: 1,
-      notes: 'Aime qu\'on lui demande son avis.',
+      notes: "Aime qu'on lui demande son avis.",
     },
     {
       id: '3',
@@ -68,7 +56,7 @@ export function GMPanel({
       physique: 3,
       hasWeapon: true,
       weapon: 'legere',
-      notes: 'Armé d\'un surin. Prêt à détaler.',
+      notes: "Armé d'un surin. Prêt à détaler.",
     },
   ]);
 
@@ -152,26 +140,33 @@ export function GMPanel({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-serif">
       
       {/* 1. TABLEAU DE LA BRIGADE (L'Ardoise & Le Temps qui passe) */}
-      <div className="bg-slate-900 text-stone-100 rounded-xl p-6 border-4 border-stone-800 shadow-xl space-y-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-700 pb-4">
+      <div className="bg-[#121820] artdeco-frame border-2 border-[#c5a059] p-6 shadow-[0_0_25px_rgba(0,0,0,0.6)] space-y-6 text-[#f4ecd8] relative">
+        <div className="artdeco-corner-tl" />
+        <div className="artdeco-corner-tr" />
+        <div className="artdeco-corner-bl" />
+        <div className="artdeco-corner-br" />
+
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#c5a059]/40 pb-4">
           <div className="flex items-center gap-3">
-            <Calendar className="w-6 h-6 text-amber-400" />
+            <div className="p-2.5 bg-[#1a232f] border border-[#dfba73] text-[#dfba73]">
+              <Calendar className="w-6 h-6" />
+            </div>
             <div>
-              <h2 className="text-xl font-cinzel font-bold text-amber-300">
+              <h2 className="text-xl font-cinzel-deco font-bold text-gold-gradient">
                 Tableau de la Brigade (Ardoise de l'Affaire)
               </h2>
-              <p className="text-xs font-serif text-stone-300 italic">
+              <p className="text-xs font-marcellus text-[#a69d8d] italic">
                 « L'adversaire d'une brigade mobile n'est pas le coupable : c'est le délai. » (Chapitre 10.4)
               </p>
             </div>
           </div>
 
           {/* Days Counter */}
-          <div className="flex items-center gap-3 bg-slate-800/80 p-2.5 rounded-lg border border-slate-700">
-            <span className="text-xs font-cinzel uppercase text-stone-400">Journées restantes :</span>
+          <div className="flex items-center gap-3 bg-[#0d1117] p-2.5 border border-[#c5a059]/50">
+            <span className="text-xs font-cinzel uppercase tracking-wider text-[#dfba73]">Jours restants :</span>
             <div className="flex items-center gap-2">
               <button
                 onClick={() =>
@@ -180,14 +175,14 @@ export function GMPanel({
                     remainingDays: Math.max(0, board.remainingDays - 1),
                   })
                 }
-                className="w-7 h-7 bg-red-900/80 hover:bg-red-800 rounded font-mono font-bold text-white flex items-center justify-center text-sm"
+                className="w-7 h-7 bg-[#3b1d14] hover:bg-[#521111] border border-[#f97316]/50 font-mono font-bold text-[#fed7aa] flex items-center justify-center text-xs cursor-pointer transition-colors"
                 title="Consommer 1 jour"
               >
                 -1j
               </button>
               <span
-                className={`text-lg font-mono font-bold px-3 py-0.5 rounded ${
-                  board.remainingDays <= 1 ? 'bg-red-600 text-white animate-pulse' : 'bg-slate-950 text-amber-400'
+                className={`text-lg font-mono font-bold px-3 py-0.5 border ${
+                  board.remainingDays <= 1 ? 'bg-[#450a0a] text-[#fecaca] border-red-500 animate-pulse' : 'bg-[#161d26] text-[#dfba73] border-[#c5a059]/40'
                 }`}
               >
                 {board.remainingDays} / {board.totalDays}
@@ -199,7 +194,7 @@ export function GMPanel({
                     remainingDays: Math.min(board.totalDays, board.remainingDays + 1),
                   })
                 }
-                className="w-7 h-7 bg-slate-700 hover:bg-slate-600 rounded font-mono font-bold text-white flex items-center justify-center text-sm"
+                className="w-7 h-7 bg-[#1a232f] hover:bg-[#253243] border border-[#c5a059]/50 font-mono font-bold text-[#dfba73] flex items-center justify-center text-xs cursor-pointer transition-colors"
               >
                 +
               </button>
@@ -208,8 +203,8 @@ export function GMPanel({
         </div>
 
         {/* Quick action time consumption */}
-        <div className="bg-slate-950/60 p-3 rounded-lg border border-slate-800">
-          <span className="text-xs font-cinzel text-amber-400 font-bold block mb-2">
+        <div className="bg-[#0d1117] p-3.5 border border-[#c5a059]/40">
+          <span className="text-xs font-cinzel text-[#dfba73] font-bold block mb-2 uppercase tracking-wider">
             Consommation rapide du temps selon l'acte entrepris :
           </span>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
@@ -222,10 +217,10 @@ export function GMPanel({
                     remainingDays: Math.max(0, board.remainingDays - act.days),
                   })
                 }
-                className="p-2 bg-slate-800/80 hover:bg-slate-700 text-left rounded border border-slate-700 text-stone-300 transition-colors"
+                className="p-2.5 bg-[#161d26] hover:bg-[#1a232f] text-left border border-[#c5a059]/30 text-[#d1c7b7] transition-colors cursor-pointer group"
               >
-                <div className="font-semibold text-white">{act.label.split(':')[0]}</div>
-                <div className="text-amber-400 font-mono mt-0.5">Coût : {act.days} journée(s)</div>
+                <div className="font-cinzel font-bold text-[#f4ecd8] group-hover:text-[#dfba73]">{act.label.split(':')[0]}</div>
+                <div className="text-[#dfba73] font-mono mt-0.5">Coût : {act.days} journée(s)</div>
               </button>
             ))}
           </div>
@@ -234,17 +229,17 @@ export function GMPanel({
         {/* Facts & Hypotheses columns */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
           {/* Faits établis */}
-          <div className="bg-slate-950/70 p-4 rounded-lg border border-slate-800 space-y-3">
-            <div className="flex items-center justify-between">
-              <h4 className="text-sm font-cinzel font-bold text-emerald-400 flex items-center gap-1.5">
+          <div className="bg-[#0d1117] p-4 border border-[#c5a059]/40 space-y-3">
+            <div className="flex items-center justify-between border-b border-[#c5a059]/30 pb-2">
+              <h4 className="text-sm font-cinzel font-bold text-emerald-400 flex items-center gap-1.5 uppercase tracking-wider">
                 <FileText className="w-4 h-4" />
-                Faits établis (Vérifiés par 2 sources)
+                Faits établis (Vérifiés)
               </h4>
-              <span className="text-[11px] text-stone-400 font-mono">{board.facts.length} faits</span>
+              <span className="text-[11px] text-[#a69d8d] font-mono">{board.facts.length} faits</span>
             </div>
-            <ul className="space-y-1.5 text-xs text-stone-200 font-typewriter">
+            <ul className="space-y-1.5 text-xs text-[#f4ecd8] font-marcellus">
               {board.facts.map((fact, idx) => (
-                <li key={idx} className="flex items-start justify-between gap-2 p-1.5 bg-slate-900 rounded">
+                <li key={idx} className="flex items-start justify-between gap-2 p-2 bg-[#161d26] border border-[#c5a059]/30">
                   <span>• {fact}</span>
                   <button
                     onClick={() =>
@@ -253,7 +248,7 @@ export function GMPanel({
                         facts: board.facts.filter((_, i) => i !== idx),
                       })
                     }
-                    className="text-stone-500 hover:text-red-400"
+                    className="text-[#a69d8d] hover:text-red-400 cursor-pointer font-bold"
                   >
                     ×
                   </button>
@@ -266,7 +261,7 @@ export function GMPanel({
                 value={newFact}
                 onChange={e => setNewFact(e.target.value)}
                 placeholder="Ajouter un fait vérifié..."
-                className="flex-1 px-2.5 py-1 text-xs bg-slate-900 border border-slate-700 rounded text-stone-100 placeholder-stone-500 outline-none"
+                className="flex-1 px-2.5 py-1 text-xs bg-[#161d26] border border-[#c5a059]/40 text-[#f4ecd8] placeholder-[#a69d8d]/50 focus:outline-none focus:border-[#dfba73]"
                 onKeyDown={e => {
                   if (e.key === 'Enter' && newFact.trim()) {
                     onUpdateBoard({ ...board, facts: [...board.facts, newFact.trim()] });
@@ -281,7 +276,7 @@ export function GMPanel({
                     setNewFact('');
                   }
                 }}
-                className="px-2.5 py-1 bg-emerald-800 text-white rounded text-xs font-bold"
+                className="px-3 py-1 bg-gradient-to-r from-[#997323] via-[#c5a059] to-[#997323] text-[#0d1117] font-bold text-xs cursor-pointer uppercase border border-[#f3e5ab]"
               >
                 +
               </button>
@@ -289,17 +284,17 @@ export function GMPanel({
           </div>
 
           {/* Hypothèses */}
-          <div className="bg-slate-950/70 p-4 rounded-lg border border-slate-800 space-y-3">
-            <div className="flex items-center justify-between">
-              <h4 className="text-sm font-cinzel font-bold text-amber-400 flex items-center gap-1.5">
+          <div className="bg-[#0d1117] p-4 border border-[#c5a059]/40 space-y-3">
+            <div className="flex items-center justify-between border-b border-[#c5a059]/30 pb-2">
+              <h4 className="text-sm font-cinzel font-bold text-amber-400 flex items-center gap-1.5 uppercase tracking-wider">
                 <AlertTriangle className="w-4 h-4" />
                 Hypothèses de travail
               </h4>
-              <span className="text-[11px] text-stone-400 font-mono">{board.hypotheses.length} hypothèses</span>
+              <span className="text-[11px] text-[#a69d8d] font-mono">{board.hypotheses.length} pistes</span>
             </div>
-            <ul className="space-y-1.5 text-xs text-stone-200 font-typewriter">
+            <ul className="space-y-1.5 text-xs text-[#d1c7b7] font-marcellus italic">
               {board.hypotheses.map((hypo, idx) => (
-                <li key={idx} className="flex items-start justify-between gap-2 p-1.5 bg-slate-900 rounded">
+                <li key={idx} className="flex items-start justify-between gap-2 p-2 bg-[#161d26] border border-[#c5a059]/30">
                   <span>? {hypo}</span>
                   <button
                     onClick={() =>
@@ -308,7 +303,7 @@ export function GMPanel({
                         hypotheses: board.hypotheses.filter((_, i) => i !== idx),
                       })
                     }
-                    className="text-stone-500 hover:text-red-400"
+                    className="text-[#a69d8d] hover:text-red-400 cursor-pointer font-bold"
                   >
                     ×
                   </button>
@@ -321,7 +316,7 @@ export function GMPanel({
                 value={newHypothesis}
                 onChange={e => setNewHypothesis(e.target.value)}
                 placeholder="Ajouter une piste / hypothèse..."
-                className="flex-1 px-2.5 py-1 text-xs bg-slate-900 border border-slate-700 rounded text-stone-100 placeholder-stone-500 outline-none"
+                className="flex-1 px-2.5 py-1 text-xs bg-[#161d26] border border-[#c5a059]/40 text-[#f4ecd8] placeholder-[#a69d8d]/50 focus:outline-none focus:border-[#dfba73]"
                 onKeyDown={e => {
                   if (e.key === 'Enter' && newHypothesis.trim()) {
                     onUpdateBoard({ ...board, hypotheses: [...board.hypotheses, newHypothesis.trim()] });
@@ -336,7 +331,7 @@ export function GMPanel({
                     setNewHypothesis('');
                   }
                 }}
-                className="px-2.5 py-1 bg-amber-700 text-white rounded text-xs font-bold"
+                className="px-3 py-1 bg-[#1a232f] hover:bg-[#253243] text-[#dfba73] border border-[#c5a059]/50 font-bold text-xs cursor-pointer uppercase"
               >
                 +
               </button>
@@ -345,15 +340,20 @@ export function GMPanel({
         </div>
       </div>
 
-      {/* 2. GESTION DES PNJ & OPPOSANTS (1 ligne par PNJ - Chapitre 15) */}
-      <div className="bg-white/80 dark:bg-stone-900/90 rounded-xl border-2 border-stone-300 dark:border-stone-700 shadow-md p-6 space-y-6">
-        <div className="flex items-center justify-between border-b border-stone-200 dark:border-stone-800 pb-3">
+      {/* 2. GESTION DES PNJ & OPPOSANTS */}
+      <div className="bg-[#121820] artdeco-frame border-2 border-[#c5a059] shadow-[0_0_25px_rgba(0,0,0,0.6)] p-6 space-y-6 text-[#f4ecd8] relative">
+        <div className="artdeco-corner-tl" />
+        <div className="artdeco-corner-tr" />
+        <div className="artdeco-corner-bl" />
+        <div className="artdeco-corner-br" />
+
+        <div className="flex items-center justify-between border-b border-[#c5a059]/40 pb-3">
           <div>
-            <h3 className="text-lg font-cinzel font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
-              <Users className="w-5 h-5 text-amber-800" />
-              Répertoire des PNJ & Opposants de la scène
+            <h3 className="text-lg font-cinzel-deco font-bold text-gold-gradient flex items-center gap-2">
+              <Users className="w-5 h-5 text-[#dfba73]" />
+              Répertoire des PNJ & Opposants
             </h3>
-            <p className="text-xs text-stone-500 font-serif italic">
+            <p className="text-xs text-[#a69d8d] font-marcellus italic">
               « Tout le monde, dans ce jeu, tient sur une ligne. » (Chapitre 15)
             </p>
           </div>
@@ -364,14 +364,14 @@ export function GMPanel({
           {npcs.map(npc => (
             <div
               key={npc.id}
-              className="p-3 bg-stone-50 dark:bg-stone-800/80 rounded-lg border border-stone-300 dark:border-stone-700 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs"
+              className="p-3 bg-[#0d1117] border border-[#c5a059]/40 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs"
             >
               <div className="flex-1">
-                <div className="font-cinzel font-bold text-stone-900 dark:text-stone-100 text-sm">
+                <div className="font-cinzel font-bold text-[#f4ecd8] text-sm">
                   {npc.name}
                 </div>
                 {npc.notes && (
-                  <p className="text-stone-600 dark:text-stone-400 italic text-[11px] mt-0.5">
+                  <p className="text-[#a69d8d] italic text-[11px] font-marcellus mt-0.5">
                     {npc.notes}
                   </p>
                 )}
@@ -381,27 +381,27 @@ export function GMPanel({
               <div className="flex flex-wrap items-center gap-3">
                 {/* Attitude badge */}
                 <div className="flex items-center gap-1">
-                  <span className="text-[10px] uppercase font-cinzel text-stone-500">Attitude :</span>
+                  <span className="text-[10px] uppercase font-cinzel text-[#a69d8d]">Attitude :</span>
                   <button
                     onClick={() => handleUpdateNpcAttitude(npc.id, -1)}
-                    className="w-5 h-5 bg-stone-200 dark:bg-stone-700 rounded text-stone-700 dark:text-stone-200 font-bold"
+                    className="w-5 h-5 bg-[#161d26] border border-[#c5a059]/30 text-[#dfba73] font-bold cursor-pointer"
                   >
                     -
                   </button>
                   <span
-                    className={`px-2 py-0.5 rounded font-mono font-bold ${
+                    className={`px-2 py-0.5 border font-mono font-bold ${
                       npc.attitude === -1
-                        ? 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300'
+                        ? 'bg-[#3b1d14] text-[#fed7aa] border-[#f97316]/50'
                         : npc.attitude === 1
-                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
-                        : 'bg-stone-200 text-stone-800 dark:bg-stone-700 dark:text-stone-300'
+                        ? 'bg-[#132e20] text-[#bbf7d0] border-[#22c55e]/50'
+                        : 'bg-[#161d26] text-[#dfba73] border-[#c5a059]/30'
                     }`}
                   >
                     {npc.attitude === -1 ? 'Hostile (-1)' : npc.attitude === 1 ? 'Loyal (+1)' : 'Neutre (0)'}
                   </span>
                   <button
                     onClick={() => handleUpdateNpcAttitude(npc.id, 1)}
-                    className="w-5 h-5 bg-stone-200 dark:bg-stone-700 rounded text-stone-700 dark:text-stone-200 font-bold"
+                    className="w-5 h-5 bg-[#161d26] border border-[#c5a059]/30 text-[#dfba73] font-bold cursor-pointer"
                   >
                     +
                   </button>
@@ -410,25 +410,25 @@ export function GMPanel({
                 {/* Physique if fighter */}
                 {npc.hasPhysique && npc.physique !== undefined && (
                   <div className="flex items-center gap-1">
-                    <span className="text-[10px] uppercase font-cinzel text-stone-500">Physique :</span>
+                    <span className="text-[10px] uppercase font-cinzel text-[#a69d8d]">Physique :</span>
                     <button
                       onClick={() => handleUpdateNpcPhysique(npc.id, -1)}
-                      className="w-5 h-5 bg-stone-200 dark:bg-stone-700 rounded text-stone-700 dark:text-stone-200 font-bold"
+                      className="w-5 h-5 bg-[#161d26] border border-[#c5a059]/30 text-[#dfba73] font-bold cursor-pointer"
                     >
                       -
                     </button>
                     <span
-                      className={`px-2 py-0.5 rounded font-mono font-bold ${
+                      className={`px-2 py-0.5 border font-mono font-bold ${
                         npc.physique === 0
-                          ? 'bg-red-600 text-white'
-                          : 'bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-300'
+                          ? 'bg-red-700 text-white border-red-800'
+                          : 'bg-[#1a232f] text-[#dfba73] border-[#c5a059]/40'
                       }`}
                     >
                       {npc.physique === 0 ? 'Hors de combat' : `Indice ${npc.physique}`}
                     </span>
                     <button
                       onClick={() => handleUpdateNpcPhysique(npc.id, 1)}
-                      className="w-5 h-5 bg-stone-200 dark:bg-stone-700 rounded text-stone-700 dark:text-stone-200 font-bold"
+                      className="w-5 h-5 bg-[#161d26] border border-[#c5a059]/30 text-[#dfba73] font-bold cursor-pointer"
                     >
                       +
                     </button>
@@ -437,14 +437,14 @@ export function GMPanel({
 
                 {/* Weapon */}
                 {npc.hasWeapon && npc.weapon && (
-                  <span className="px-2 py-0.5 bg-stone-200 dark:bg-stone-700 text-stone-800 dark:text-stone-300 rounded font-mono">
+                  <span className="px-2 py-0.5 bg-[#161d26] border border-[#c5a059]/30 text-[#d1c7b7] font-mono">
                     Arme {WEAPONS[npc.weapon].name} ({WEAPONS[npc.weapon].damage})
                   </span>
                 )}
 
                 <button
                   onClick={() => handleDeleteNpc(npc.id)}
-                  className="p-1 text-stone-400 hover:text-red-600 transition-colors"
+                  className="p-1 text-[#a69d8d] hover:text-red-400 transition-colors cursor-pointer"
                   title="Supprimer le PNJ"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -455,43 +455,44 @@ export function GMPanel({
         </div>
 
         {/* Add NPC form */}
-        <div className="p-3 bg-stone-100/70 dark:bg-stone-800/50 rounded-lg border border-dashed border-stone-300 dark:border-stone-700 space-y-3">
-          <span className="text-xs font-cinzel font-bold text-stone-800 dark:text-stone-200 block">
+        <div className="p-4 bg-[#0d1117] border border-[#c5a059]/40 space-y-3">
+          <span className="text-xs font-cinzel font-bold text-[#dfba73] uppercase tracking-wider block">
             + Ajouter un interlocuteur ou opposant
           </span>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             <input
               type="text"
               value={newNpcName}
               onChange={e => setNewNpcName(e.target.value)}
-              placeholder="Nom / Fonction (ex: Inspecteur de province, Témoin...)"
-              className="px-2.5 py-1.5 text-xs bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded"
+              placeholder="Nom / Fonction (ex: Témoin, Indic...)"
+              className="px-2.5 py-1.5 text-xs bg-[#161d26] border border-[#c5a059]/40 text-[#f4ecd8] focus:outline-none focus:border-[#dfba73]"
             />
             <select
               value={newNpcAttitude}
               onChange={e => setNewNpcAttitude(Number(e.target.value) as -1 | 0 | 1)}
-              className="px-2.5 py-1.5 text-xs bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded font-serif"
+              className="px-2.5 py-1.5 text-xs bg-[#161d26] border border-[#c5a059]/40 text-[#dfba73] focus:outline-none"
             >
-              <option value="-1">Hostile (-1)</option>
-              <option value="0">Neutre (0)</option>
-              <option value="1">Loyal (+1)</option>
+              <option value="-1" className="bg-[#121820]">Hostile (-1)</option>
+              <option value="0" className="bg-[#121820]">Neutre (0)</option>
+              <option value="1" className="bg-[#121820]">Loyal (+1)</option>
             </select>
             <input
               type="text"
               value={newNpcNotes}
               onChange={e => setNewNpcNotes(e.target.value)}
               placeholder="Note / Enjeu / Arme..."
-              className="px-2.5 py-1.5 text-xs bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded"
+              className="px-2.5 py-1.5 text-xs bg-[#161d26] border border-[#c5a059]/40 text-[#f4ecd8] focus:outline-none focus:border-[#dfba73]"
             />
           </div>
 
           <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-            <div className="flex items-center gap-4 text-xs">
+            <div className="flex items-center gap-4 text-xs font-marcellus">
               <label className="flex items-center gap-1.5 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={newNpcHasPhysique}
                   onChange={e => setNewNpcHasPhysique(e.target.checked)}
+                  className="rounded text-[#c5a059]"
                 />
                 <span>Indice Physique</span>
               </label>
@@ -499,14 +500,14 @@ export function GMPanel({
                 <select
                   value={newNpcPhysique}
                   onChange={e => setNewNpcPhysique(Number(e.target.value))}
-                  className="p-1 text-xs bg-white dark:bg-stone-800 border rounded"
+                  className="p-1 text-xs bg-[#161d26] border border-[#c5a059]/40 text-[#dfba73]"
                 >
-                  <option value="0">0 (Figurant)</option>
-                  <option value="1">1 (Figurant / Sbire)</option>
-                  <option value="2">2 (Sbire)</option>
-                  <option value="3">3 (Sbire / Boss)</option>
-                  <option value="4">4 (Boss)</option>
-                  <option value="5">5 (Boss exceptionnel)</option>
+                  <option value="0" className="bg-[#121820]">0 (Figurant)</option>
+                  <option value="1" className="bg-[#121820]">1 (Figurant / Sbire)</option>
+                  <option value="2" className="bg-[#121820]">2 (Sbire)</option>
+                  <option value="3" className="bg-[#121820]">3 (Sbire / Boss)</option>
+                  <option value="4" className="bg-[#121820]">4 (Boss)</option>
+                  <option value="5" className="bg-[#121820]">5 (Boss exceptionnel)</option>
                 </select>
               )}
 
@@ -515,6 +516,7 @@ export function GMPanel({
                   type="checkbox"
                   checked={newNpcHasWeapon}
                   onChange={e => setNewNpcHasWeapon(e.target.checked)}
+                  className="rounded text-[#c5a059]"
                 />
                 <span>Armé</span>
               </label>
@@ -522,18 +524,18 @@ export function GMPanel({
                 <select
                   value={newNpcWeapon}
                   onChange={e => setNewNpcWeapon(e.target.value as WeaponCategory)}
-                  className="p-1 text-xs bg-white dark:bg-stone-800 border rounded"
+                  className="p-1 text-xs bg-[#161d26] border border-[#c5a059]/40 text-[#dfba73]"
                 >
-                  <option value="legere">Légère (1)</option>
-                  <option value="moyenne">Moyenne (2)</option>
-                  <option value="lourde">Lourde (3)</option>
+                  <option value="legere" className="bg-[#121820]">Légère (1)</option>
+                  <option value="moyenne" className="bg-[#121820]">Moyenne (2)</option>
+                  <option value="lourde" className="bg-[#121820]">Lourde (3)</option>
                 </select>
               )}
             </div>
 
             <button
               onClick={handleAddNPC}
-              className="px-3 py-1.5 bg-[#78350f] hover:bg-[#582609] text-white text-xs font-cinzel font-bold rounded shadow transition-all"
+              className="px-3.5 py-1.5 bg-gradient-to-r from-[#997323] via-[#c5a059] to-[#997323] text-[#0d1117] text-xs font-cinzel font-bold uppercase tracking-wider cursor-pointer border border-[#f3e5ab]"
             >
               Enregistrer le PNJ
             </button>
@@ -541,22 +543,27 @@ export function GMPanel({
         </div>
       </div>
 
-      {/* 3. ASSISTANT DE POURSUITE & COMPLICATIONS D8 (Chapitre 14) */}
-      <div className="bg-white/80 dark:bg-stone-900/90 rounded-xl border-2 border-stone-300 dark:border-stone-700 shadow-md p-6 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-200 dark:border-stone-800 pb-3">
+      {/* 3. ASSISTANT DE POURSUITE & COMPLICATIONS D8 */}
+      <div className="bg-[#121820] artdeco-frame border-2 border-[#c5a059] shadow-[0_0_25px_rgba(0,0,0,0.6)] p-6 space-y-4 text-[#f4ecd8] relative">
+        <div className="artdeco-corner-tl" />
+        <div className="artdeco-corner-tr" />
+        <div className="artdeco-corner-bl" />
+        <div className="artdeco-corner-br" />
+
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#c5a059]/40 pb-3">
           <div>
-            <h3 className="text-lg font-cinzel font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
-              <Footprints className="w-5 h-5 text-emerald-700" />
+            <h3 className="text-lg font-cinzel-deco font-bold text-gold-gradient flex items-center gap-2">
+              <Footprints className="w-5 h-5 text-emerald-400" />
               Assistant de Poursuite D8
             </h3>
-            <p className="text-xs text-stone-500 font-serif italic">
+            <p className="text-xs text-[#a69d8d] font-marcellus italic">
               Tirage des obstacles imprévus (Table D8 officielle - Chapitre 14.2)
             </p>
           </div>
 
           <button
             onClick={handleRollPursuitComplication}
-            className="px-4 py-2 bg-emerald-800 hover:bg-emerald-900 text-white rounded-lg font-cinzel font-bold text-xs shadow transition-all flex items-center gap-2"
+            className="px-4 py-2 bg-[#1a232f] hover:bg-[#253243] text-[#dfba73] border border-[#c5a059]/60 font-cinzel font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer"
           >
             <Dices className="w-4 h-4" />
             Tirer une complication D8
@@ -564,65 +571,70 @@ export function GMPanel({
         </div>
 
         {activeObstacle ? (
-          <div className="p-4 bg-emerald-50 dark:bg-emerald-950/40 rounded-lg border-2 border-emerald-600 space-y-1">
+          <div className="p-4 bg-[#0d1117] border border-emerald-500/50 space-y-1">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-cinzel font-bold text-emerald-900 dark:text-emerald-300 uppercase">
+              <span className="text-xs font-cinzel font-bold text-emerald-400 uppercase tracking-wider">
                 Obstacle D8 = {activeObstacle.d8} : {activeObstacle.title}
               </span>
             </div>
-            <p className="font-newsreader italic text-sm text-stone-800 dark:text-stone-200">
+            <p className="font-marcellus italic text-sm text-[#f4ecd8]">
               « {activeObstacle.desc} »
             </p>
           </div>
         ) : (
-          <div className="p-3 bg-stone-100 dark:bg-stone-800/60 rounded text-xs text-stone-500 italic text-center">
+          <div className="p-3 bg-[#0d1117] border border-[#c5a059]/30 text-xs text-[#a69d8d] italic text-center font-marcellus">
             Cliquez sur « Tirer une complication D8 » pour générer un obstacle de parcours.
           </div>
         )}
       </div>
 
       {/* 4. JET SECRET DU MENEUR */}
-      <div className="bg-stone-900 text-stone-100 rounded-xl p-6 border-2 border-stone-800 shadow-md space-y-4">
-        <div className="flex items-center justify-between border-b border-stone-800 pb-3">
+      <div className="bg-[#121820] artdeco-frame border-2 border-[#c5a059] shadow-[0_0_25px_rgba(0,0,0,0.6)] p-6 space-y-4 text-[#f4ecd8] relative">
+        <div className="artdeco-corner-tl" />
+        <div className="artdeco-corner-tr" />
+        <div className="artdeco-corner-bl" />
+        <div className="artdeco-corner-br" />
+
+        <div className="flex items-center justify-between border-b border-[#c5a059]/40 pb-3">
           <div className="flex items-center gap-2">
             <EyeOff className="w-5 h-5 text-red-400" />
-            <h3 className="font-cinzel font-bold text-base text-red-300">
+            <h3 className="font-cinzel font-bold text-base text-red-400 uppercase tracking-wider">
               Jet Secret du Meneur (Huis clos)
             </h3>
           </div>
-          <span className="text-xs text-stone-400 font-serif italic">
-            Les joueurs recevront un avis confidentiel sans voir le chiffre
+          <span className="text-xs text-[#a69d8d] font-marcellus italic">
+            Les joueurs recevront un avis confidentiel sans voir le score
           </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="sm:col-span-2">
-            <label className="block text-xs font-cinzel text-stone-400 mb-1">
+            <label className="block text-xs font-cinzel text-[#dfba73] mb-1 uppercase tracking-wider">
               Intitulé de l'action secrète
             </label>
             <input
               type="text"
               value={secretActionName}
               onChange={e => setSecretActionName(e.target.value)}
-              className="w-full px-3 py-1.5 text-xs bg-stone-950 border border-stone-700 rounded text-stone-100"
+              className="w-full px-3 py-1.5 text-xs bg-[#0d1117] border border-[#c5a059]/40 text-[#f4ecd8] focus:outline-none focus:border-[#dfba73]"
             />
           </div>
           <div>
-            <label className="block text-xs font-cinzel text-stone-400 mb-1">
+            <label className="block text-xs font-cinzel text-[#dfba73] mb-1 uppercase tracking-wider">
               Modificateur total
             </label>
             <input
               type="number"
               value={secretModifier}
               onChange={e => setSecretModifier(Number(e.target.value))}
-              className="w-full px-3 py-1.5 text-xs bg-stone-950 border border-stone-700 rounded text-stone-100 font-mono"
+              className="w-full px-3 py-1.5 text-xs bg-[#0d1117] border border-[#c5a059]/40 text-[#dfba73] font-mono focus:outline-none focus:border-[#dfba73]"
             />
           </div>
         </div>
 
         <button
           onClick={() => onGMSecretRoll(secretActionName, secretModifier)}
-          className="w-full py-2.5 bg-red-900 hover:bg-red-800 text-white font-cinzel font-bold text-xs rounded-lg transition-colors flex items-center justify-center gap-2"
+          className="w-full py-2.5 bg-[#3b1d14] hover:bg-[#521111] text-[#fed7aa] border border-[#f97316]/50 font-cinzel font-bold text-xs uppercase tracking-widest transition-colors flex items-center justify-center gap-2 cursor-pointer"
         >
           <EyeOff className="w-4 h-4" />
           Lancer le Dé Secret à Huis Clos

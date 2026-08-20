@@ -26,6 +26,8 @@ import {
   EyeOff,
   Clock,
   Trash2,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import {
   PlayerRole,
@@ -62,27 +64,27 @@ const DEGREE_INFO: Record<DegreeResult, { label: string; summary: string; colorC
   echec_critique: {
     label: 'Échec critique',
     summary: 'Conséquence dramatique & complication majeure',
-    colorClass: 'text-[#8B0000] font-bold',
+    colorClass: 'text-[#881337] dark:text-[#fecaca] bg-rose-100 dark:bg-[#450a0a] border border-rose-400 dark:border-rose-700 px-2 py-0.5 rounded font-bold tracking-wide',
   },
   echec: {
     label: 'Échec',
     summary: "Pas d'avancement direct",
-    colorClass: 'text-[#9A3412] font-bold',
+    colorClass: 'text-[#7c2d12] dark:text-[#fed7aa] bg-orange-100 dark:bg-[#3b1d14] border border-orange-400 dark:border-orange-700 px-2 py-0.5 rounded font-bold tracking-wide',
   },
   ambivalent: {
     label: 'Ambivalent',
     summary: "« Vous l'obtenez, mais... »",
-    colorClass: 'text-[#B45309] font-bold',
+    colorClass: 'text-[#78350f] dark:text-[#fef08a] bg-amber-100 dark:bg-[#3b2d13] border border-amber-400 dark:border-amber-700 px-2 py-0.5 rounded font-bold tracking-wide',
   },
   reussite: {
     label: 'Réussite',
     summary: 'Objectif atteint proprement',
-    colorClass: 'text-[#15803D] font-bold',
+    colorClass: 'text-[#14532d] dark:text-[#bbf7d0] bg-emerald-100 dark:bg-[#132e20] border border-emerald-400 dark:border-emerald-700 px-2 py-0.5 rounded font-bold tracking-wide',
   },
   reussite_majeure: {
     label: 'Réussite majeure',
     summary: 'Succès éclatant avec avantage net',
-    colorClass: 'text-[#047857] font-bold',
+    colorClass: 'text-[#581c87] dark:text-[#e9d5ff] bg-purple-100 dark:bg-[#2b1b3d] border border-purple-400 dark:border-purple-700 px-2 py-0.5 rounded font-bold tracking-wide',
   },
 };
 
@@ -95,6 +97,36 @@ export default function App() {
   const [isBoardModalOpen, setIsBoardModalOpen] = useState<boolean>(false);
   const [isRulesModalOpen, setIsRulesModalOpen] = useState<boolean>(false);
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
+
+  // Day / Night Theme Mode
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    try {
+      const saved = localStorage.getItem('bm1910_theme');
+      if (saved === 'light' || saved === 'dark') return saved;
+    } catch (e) {
+      console.warn('Failed to load theme from localStorage', e);
+    }
+    return 'dark';
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('bm1910_theme', theme);
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+      } else {
+        document.documentElement.classList.add('light');
+        document.documentElement.classList.remove('dark');
+      }
+    } catch (e) {
+      console.warn('Failed to save theme to localStorage', e);
+    }
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  };
 
   // Roll history & state
   const [history, setHistory] = useState<RollHistoryEntry[]>(() => {
@@ -499,47 +531,53 @@ export default function App() {
   const formatMod = (val: number) => (val >= 0 ? `+${val}` : `${val}`);
 
   return (
-    <div className="min-h-screen bg-[#EDE7DB] py-4 sm:py-8 px-2 sm:px-4 font-serif text-[#2B231D] antialiased">
+    <div className={`min-h-screen ${theme === 'dark' ? 'bg-artdeco-dark dark' : 'bg-artdeco-light light'} py-4 sm:py-8 px-2 sm:px-4 font-serif text-[#f4ecd8] antialiased selection:bg-[#c5a059] selection:text-[#0d1117]`}>
       
-      {/* MAIN DOCUMENT CONTAINER WITH VINTAGE DOUBLE BORDER */}
-      <div className="max-w-4xl mx-auto bg-[#FAF7EE] border-2 border-[#5C3A1D] p-3 sm:p-7 shadow-xl relative">
+      {/* MAIN DOCUMENT CONTAINER WITH ART DECO GEOMETRIC FRAMING */}
+      <div className="max-w-4xl mx-auto bg-[#121820] artdeco-frame p-3 sm:p-7 relative text-[#e6decb]">
         
-        {/* INNER BORDER */}
-        <div className="border border-[#78350F]/40 p-3 sm:p-5 bg-white/40">
+        {/* CORNER ORNAMENTS */}
+        <div className="artdeco-corner-tl" />
+        <div className="artdeco-corner-tr" />
+        <div className="artdeco-corner-bl" />
+        <div className="artdeco-corner-br" />
+        
+        {/* INNER ART DECO BORDER */}
+        <div className="border border-[#c5a059]/40 p-3 sm:p-5 bg-[#0f141b]/80 relative shadow-inner rounded-lg">
 
           {/* ========================================================= */}
-          {/* MULTIPLAYER & TABLE STATUS BAR (VINTAGE BELLE ÉPOQUE) */}
+          {/* MULTIPLAYER & TABLE STATUS BAR (ART DECO ÉDITION) */}
           {/* ========================================================= */}
-          <div className="bg-[#F4EFE2] border border-[#78350F]/30 p-2.5 sm:p-3 rounded mb-4 shadow-xs flex flex-wrap items-center justify-between gap-2.5">
+          <div className="bg-[#161d26] border border-[#c5a059]/50 p-2.5 sm:p-3 rounded-md mb-5 shadow-md flex flex-wrap items-center justify-between gap-2.5 relative">
             
             {/* Left: Connection Status & Profile */}
             <div className="flex items-center gap-2.5">
               <div
-                className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold font-mono text-xs shadow-xs relative cursor-pointer"
-                style={{ backgroundColor: profile.color }}
+                className="w-9 h-9 border border-[#c5a059] bg-[#1a232f] rounded-md flex items-center justify-center text-[#dfba73] font-bold font-cinzel text-xs shadow-xs relative cursor-pointer hover:border-[#dfba73] transition-colors"
+                style={{ borderColor: profile.color || '#c5a059' }}
                 onClick={() => setIsRoomModalOpen(true)}
                 title="Modifier mon profil"
               >
-                {profile.role === 'gm' ? <Crown size={15} /> : profile.name.charAt(0).toUpperCase()}
+                {profile.role === 'gm' ? <Crown size={17} className="text-[#dfba73]" /> : profile.name.charAt(0).toUpperCase()}
                 {isConnected && (
-                  <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 border border-white rounded-full animate-pulse" />
+                  <span className="absolute -bottom-1 -right-1 w-2.5 h-2.5 bg-emerald-400 border border-[#121820] rounded-full animate-pulse" />
                 )}
               </div>
 
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-cinzel font-bold text-xs text-[#6B1717] tracking-wider">
+                  <span className="font-cinzel-deco font-bold text-xs text-[#dfba73] tracking-widest uppercase">
                     {isConnected && roomId ? `BRIGADE : ${roomId}` : 'TABLE LOCALE / SOLO'}
                   </span>
                   {isConnected && (
-                    <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded font-mono font-bold">
-                      {players.length} agent{players.length > 1 ? 's' : ''} en direct
+                    <span className="text-[10px] bg-[#132e20] text-[#86efac] border border-[#22c55e]/40 px-1.5 py-0.2 font-mono font-bold">
+                      {players.length} agent{players.length > 1 ? 's' : ''} actif{players.length > 1 ? 's' : ''}
                     </span>
                   )}
                 </div>
-                <div className="text-[11px] text-stone-600 italic">
-                  <span>{profile.name}</span> •{' '}
-                  <span>{profile.role === 'gm' ? 'Meneur de Jeu (MJ)' : 'Inspecteur'}</span>
+                <div className="text-[11px] text-[#a69d8d] font-marcellus">
+                  <span className="text-[#f4ecd8]">{profile.name}</span> •{' '}
+                  <span>{profile.role === 'gm' ? 'Meneur de Jeu (MJ)' : 'Inspecteur de la Sûreté'}</span>
                 </div>
               </div>
             </div>
@@ -549,10 +587,10 @@ export default function App() {
               {/* Join/Create Room button */}
               <button
                 onClick={() => setIsRoomModalOpen(true)}
-                className="px-2.5 py-1.5 bg-[#6B1717] hover:bg-[#521111] text-white rounded transition-colors flex items-center gap-1 cursor-pointer shadow-2xs"
+                className="px-2.5 py-1.5 bg-gradient-to-r from-[#997323] via-[#c5a059] to-[#997323] hover:brightness-110 text-[#0d1117] border border-[#f3e5ab] tracking-wider transition-all flex items-center gap-1 cursor-pointer shadow-xs uppercase font-bold"
                 title="Créer ou Rejoindre une table en direct"
               >
-                <Users className="w-3.5 h-3.5" />
+                <Users className="w-3.5 h-3.5 text-[#0d1117]" />
                 <span>{isConnected ? 'Gérer Table' : 'Table Multi'}</span>
               </button>
 
@@ -560,10 +598,10 @@ export default function App() {
               {isConnected && roomId && (
                 <button
                   onClick={handleCopyInvitationLink}
-                  className="px-2.5 py-1.5 bg-stone-200 hover:bg-stone-300 text-stone-800 rounded transition-colors flex items-center gap-1 border border-stone-400 cursor-pointer"
+                  className="px-2.5 py-1.5 bg-[#1a232f] hover:bg-[#253243] text-[#dfba73] border border-[#c5a059]/60 tracking-wider transition-colors flex items-center gap-1 cursor-pointer"
                   title="Copier le lien d'invitation direct"
                 >
-                  {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-700" /> : <Share2 className="w-3.5 h-3.5" />}
+                  {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5" />}
                   <span>{copiedLink ? 'Lien copié !' : 'Inviter'}</span>
                 </button>
               )}
@@ -572,10 +610,10 @@ export default function App() {
               {isConnected && (
                 <button
                   onClick={() => setIsPlayersModalOpen(true)}
-                  className="px-2 py-1.5 bg-stone-200 hover:bg-stone-300 text-stone-800 rounded transition-colors flex items-center gap-1 border border-stone-400 cursor-pointer"
+                  className="px-2 py-1.5 bg-[#1a232f] hover:bg-[#253243] text-[#dfba73] border border-[#c5a059]/60 tracking-wider transition-colors flex items-center gap-1 cursor-pointer"
                   title="Voir la liste des collègues connectés"
                 >
-                  <Shield className="w-3.5 h-3.5 text-blue-900" />
+                  <Shield className="w-3.5 h-3.5 text-amber-400" />
                   <span>({players.length})</span>
                 </button>
               )}
@@ -583,67 +621,101 @@ export default function App() {
               {/* Ardoise / Brigade Board */}
               <button
                 onClick={() => setIsBoardModalOpen(true)}
-                className="px-2.5 py-1.5 bg-stone-200 hover:bg-stone-300 text-stone-800 rounded transition-colors flex items-center gap-1 border border-stone-400 cursor-pointer"
+                className="px-2.5 py-1.5 bg-[#1a232f] hover:bg-[#253243] text-[#f4ecd8] border border-[#c5a059]/60 hover:border-[#dfba73] tracking-wider transition-colors flex items-center gap-1 cursor-pointer"
                 title="Ouvrir l'Ardoise de la Brigade (Faits & Délais)"
               >
-                <Calendar className="w-3.5 h-3.5 text-blue-800" />
+                <Calendar className="w-3.5 h-3.5 text-[#dfba73]" />
                 <span>Ardoise ({board.remainingDays}j)</span>
               </button>
 
               {/* Rules reference */}
               <button
                 onClick={() => setIsRulesModalOpen(true)}
-                className="px-2.5 py-1.5 bg-stone-200 hover:bg-stone-300 text-stone-800 rounded transition-colors flex items-center gap-1 border border-stone-400 cursor-pointer"
+                className="px-2.5 py-1.5 bg-[#1a232f] hover:bg-[#253243] text-[#f4ecd8] border border-[#c5a059]/60 hover:border-[#dfba73] tracking-wider transition-colors flex items-center gap-1 cursor-pointer"
                 title="Consulter l'aide-mémoire officiel des règles D8"
               >
-                <BookOpen className="w-3.5 h-3.5 text-[#78350F]" />
+                <BookOpen className="w-3.5 h-3.5 text-[#dfba73]" />
                 <span>Règles D8</span>
+              </button>
+
+              {/* Day / Night Theme Button */}
+              <button
+                id="theme-toggle-btn"
+                onClick={toggleTheme}
+                className="px-2.5 py-1.5 bg-[#1a232f] hover:bg-[#253243] text-[#dfba73] border border-[#c5a059]/60 hover:border-[#dfba73] tracking-wider transition-colors flex items-center gap-1 cursor-pointer"
+                title={theme === 'dark' ? 'Passer en Mode Jour (Belle Époque / Papier)' : 'Passer en Mode Nuit (Art Déco Noir & Or)'}
+              >
+                {theme === 'dark' ? (
+                  <>
+                    <Sun className="w-3.5 h-3.5 text-amber-300" />
+                    <span>Jour</span>
+                  </>
+                ) : (
+                  <>
+                    <Moon className="w-3.5 h-3.5 text-amber-700" />
+                    <span>Nuit</span>
+                  </>
+                )}
               </button>
             </div>
 
           </div>
 
-          {/* HEADER */}
-          <header className="text-center mb-4">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-cinzel font-bold tracking-wider text-[#6B1717]">
-              BRIGADES MOBILES 1910
+          {/* ART DECO HEADER */}
+          <header className="text-center mb-5 relative">
+            <div className="flex items-center justify-center gap-3 mb-1">
+              <div className="h-px bg-gradient-to-r from-transparent via-[#c5a059] to-transparent w-16 sm:w-28" />
+              <span className="text-[#dfba73] text-xs sm:text-sm font-cinzel font-bold tracking-widest">★ 1910 — SÛRETÉ NATIONALE ★</span>
+              <div className="h-px bg-gradient-to-r from-transparent via-[#c5a059] to-transparent w-16 sm:w-28" />
+            </div>
+
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-cinzel-deco font-bold tracking-widest text-gold-gradient py-1">
+              BRIGADES MOBILES
             </h1>
-            <p className="mt-1 text-xs sm:text-sm italic text-stone-700">
-              — Boîte à Outils Système D8 (Générique V6) —
+            <p className="mt-1 text-xs sm:text-sm text-[#d1c7b7] font-marcellus tracking-wider">
+              — Système D8 Officiel & Boîte à Outils d'Enquête —
             </p>
-            <div className="w-full h-px bg-[#5C3A1D]/30 my-3" />
+            
+            {/* Geometric diamond divider */}
+            <div className="flex items-center justify-center gap-2 my-3.5">
+              <div className="h-px bg-gradient-to-r from-transparent via-[#c5a059]/70 to-[#c5a059]/20 flex-1 max-w-[120px]" />
+              <div className="w-2.5 h-2.5 rotate-45 border border-[#dfba73] bg-[#0f141b]" />
+              <div className="w-1.5 h-1.5 rotate-45 bg-[#dfba73]" />
+              <div className="w-2.5 h-2.5 rotate-45 border border-[#dfba73] bg-[#0f141b]" />
+              <div className="h-px bg-gradient-to-l from-transparent via-[#c5a059]/70 to-[#c5a059]/20 flex-1 max-w-[120px]" />
+            </div>
           </header>
 
-          {/* HORIZONTAL NAVIGATION TABS */}
-          <nav className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2.5 mb-4 text-xs sm:text-sm">
+          {/* HORIZONTAL NAVIGATION TABS WITH ART DECO GEOMETRY */}
+          <nav className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 mb-5 text-xs sm:text-sm">
             <button
               onClick={() => setActiveTab('generic')}
-              className={`px-3 py-1.5 cursor-pointer transition-colors ${
+              className={`px-3.5 py-2 cursor-pointer transition-all uppercase tracking-wider font-cinzel text-xs ${
                 activeTab === 'generic'
-                  ? 'border border-[#6B1717] bg-[#6B1717] text-white font-bold shadow-xs'
-                  : 'text-stone-800 hover:text-[#6B1717] font-semibold bg-stone-100/80 border border-stone-300'
+                  ? 'border border-[#dfba73] bg-gradient-to-r from-[#997323] via-[#c5a059] to-[#997323] text-[#0d1117] font-bold shadow-[0_0_12px_rgba(197,160,89,0.35)]'
+                  : 'text-[#d1c7b7] hover:text-[#dfba73] hover:border-[#c5a059] bg-[#161d26] border border-[#c5a059]/40'
               }`}
             >
-              🎲 Test Générique (Rapide)
+              🎲 Test Universel
             </button>
 
             <button
               onClick={() => setActiveTab('action')}
-              className={`px-3 py-1.5 cursor-pointer transition-colors ${
+              className={`px-3.5 py-2 cursor-pointer transition-all uppercase tracking-wider font-cinzel text-xs ${
                 activeTab === 'action'
-                  ? 'border border-[#6B1717] bg-white text-[#6B1717] font-bold shadow-xs'
-                  : 'text-stone-700 hover:text-[#6B1717] font-medium'
+                  ? 'border border-[#dfba73] bg-gradient-to-r from-[#997323] via-[#c5a059] to-[#997323] text-[#0d1117] font-bold shadow-[0_0_12px_rgba(197,160,89,0.35)]'
+                  : 'text-[#d1c7b7] hover:text-[#dfba73] hover:border-[#c5a059] bg-[#161d26] border border-[#c5a059]/40'
               }`}
             >
-              Test d'Action / Physique
+              Action / Enquête
             </button>
 
             <button
               onClick={() => setActiveTab('social')}
-              className={`px-3 py-1.5 cursor-pointer transition-colors ${
+              className={`px-3.5 py-2 cursor-pointer transition-all uppercase tracking-wider font-cinzel text-xs ${
                 activeTab === 'social'
-                  ? 'border border-[#6B1717] bg-white text-[#6B1717] font-bold shadow-xs'
-                  : 'text-stone-700 hover:text-[#6B1717] font-medium'
+                  ? 'border border-[#dfba73] bg-gradient-to-r from-[#997323] via-[#c5a059] to-[#997323] text-[#0d1117] font-bold shadow-[0_0_12px_rgba(197,160,89,0.35)]'
+                  : 'text-[#d1c7b7] hover:text-[#dfba73] hover:border-[#c5a059] bg-[#161d26] border border-[#c5a059]/40'
               }`}
             >
               Échange Social
@@ -651,39 +723,39 @@ export default function App() {
 
             <button
               onClick={() => setActiveTab('pursuit')}
-              className={`px-3 py-1.5 cursor-pointer transition-colors ${
+              className={`px-3.5 py-2 cursor-pointer transition-all uppercase tracking-wider font-cinzel text-xs ${
                 activeTab === 'pursuit'
-                  ? 'border border-[#6B1717] bg-white text-[#6B1717] font-bold shadow-xs'
-                  : 'text-stone-700 hover:text-[#6B1717] font-medium'
+                  ? 'border border-[#dfba73] bg-gradient-to-r from-[#997323] via-[#c5a059] to-[#997323] text-[#0d1117] font-bold shadow-[0_0_12px_rgba(197,160,89,0.35)]'
+                  : 'text-[#d1c7b7] hover:text-[#dfba73] hover:border-[#c5a059] bg-[#161d26] border border-[#c5a059]/40'
               }`}
             >
-              Course & Poursuite
+              Poursuite
             </button>
 
             <button
               onClick={() => setActiveTab('combat')}
-              className={`px-3 py-1.5 cursor-pointer transition-colors ${
+              className={`px-3.5 py-2 cursor-pointer transition-all uppercase tracking-wider font-cinzel text-xs ${
                 activeTab === 'combat'
-                  ? 'border border-[#6B1717] bg-white text-[#6B1717] font-bold shadow-xs'
-                  : 'text-stone-700 hover:text-[#6B1717] font-medium'
+                  ? 'border border-[#dfba73] bg-gradient-to-r from-[#997323] via-[#c5a059] to-[#997323] text-[#0d1117] font-bold shadow-[0_0_12px_rgba(197,160,89,0.35)]'
+                  : 'text-[#d1c7b7] hover:text-[#dfba73] hover:border-[#c5a059] bg-[#161d26] border border-[#c5a059]/40'
               }`}
             >
-              Combat & Blessures
+              Combat
             </button>
 
             <button
               onClick={() => setActiveTab('end_case')}
-              className={`px-3 py-1.5 cursor-pointer transition-colors ${
+              className={`px-3.5 py-2 cursor-pointer transition-all uppercase tracking-wider font-cinzel text-xs ${
                 activeTab === 'end_case'
-                  ? 'border border-[#6B1717] bg-white text-[#6B1717] font-bold shadow-xs'
-                  : 'text-stone-700 hover:text-[#6B1717] font-medium'
+                  ? 'border border-[#dfba73] bg-gradient-to-r from-[#997323] via-[#c5a059] to-[#997323] text-[#0d1117] font-bold shadow-[0_0_12px_rgba(197,160,89,0.35)]'
+                  : 'text-[#d1c7b7] hover:text-[#dfba73] hover:border-[#c5a059] bg-[#161d26] border border-[#c5a059]/40'
               }`}
             >
-              Séquence de Fin d'Affaire
+              Fin d'Affaire (XP)
             </button>
           </nav>
 
-          <div className="w-full h-px bg-[#5C3A1D]/20 mb-5" />
+          <div className="w-full h-px bg-[#c5a059]/30 mb-5" />
 
           {/* ======================================================== */}
           {/* TAB 0 : TEST GÉNÉRIQUE RAPIDE (SANS SE PRENDRE LA TÊTE) */}
@@ -704,7 +776,7 @@ export default function App() {
                   <select
                     value={genericRank}
                     onChange={(e) => setGenericRank(Number(e.target.value) as SkillRank)}
-                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-md focus:outline-none focus:border-[#6B1717]"
                   >
                     {SKILL_RANKS.map((r) => (
                       <option key={r.rank} value={r.rank}>
@@ -722,7 +794,7 @@ export default function App() {
                   <select
                     value={genericDiffOrAttitude}
                     onChange={(e) => setGenericDiffOrAttitude(Number(e.target.value))}
-                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-md focus:outline-none focus:border-[#6B1717]"
                   >
                     <option value={2}>Triviale / Favorable (+2)</option>
                     <option value={1}>Facile / Amicale (+1)</option>
@@ -741,7 +813,7 @@ export default function App() {
                   <select
                     value={genericAdvantage}
                     onChange={(e) => setGenericAdvantage(Number(e.target.value) as AdvantageType)}
-                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-md focus:outline-none focus:border-[#6B1717]"
                   >
                     <option value={0}>Aucun (0)</option>
                     <option value={1}>Mineur (+1)</option>
@@ -757,7 +829,7 @@ export default function App() {
                   <select
                     value={genericDisadvantage}
                     onChange={(e) => setGenericDisadvantage(Number(e.target.value) as DisadvantageType)}
-                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-md focus:outline-none focus:border-[#6B1717]"
                   >
                     <option value={0}>Aucun (0)</option>
                     <option value={1}>Mineur (-1)</option>
@@ -773,7 +845,7 @@ export default function App() {
                   <select
                     value={genericHealthPenalty}
                     onChange={(e) => setGenericHealthPenalty(Number(e.target.value))}
-                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-md focus:outline-none focus:border-[#6B1717]"
                   >
                     <option value={0}>Base (0) — Indemne / Éprouvé</option>
                     <option value={-1}>Blessé (-1)</option>
@@ -833,7 +905,7 @@ export default function App() {
                   <select
                     value={actionRank}
                     onChange={(e) => setActionRank(Number(e.target.value) as SkillRank)}
-                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-md focus:outline-none focus:border-[#6B1717]"
                   >
                     {SKILL_RANKS.map((r) => (
                       <option key={r.rank} value={r.rank}>
@@ -850,7 +922,7 @@ export default function App() {
                   <select
                     value={actionDifficultyTier}
                     onChange={(e) => setActionDifficultyTier(e.target.value as DifficultyTier)}
-                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-md focus:outline-none focus:border-[#6B1717]"
                   >
                     <option value="triviale">Triviale (+2 — Indice 0)</option>
                     <option value="facile">Facile (+1 — Indice 1)</option>
@@ -868,7 +940,7 @@ export default function App() {
                   <select
                     value={actionAdvantage}
                     onChange={(e) => setActionAdvantage(Number(e.target.value) as AdvantageType)}
-                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-md focus:outline-none focus:border-[#6B1717]"
                   >
                     <option value={0}>Aucune (0)</option>
                     <option value={1}>Favorable (+1)</option>
@@ -883,7 +955,7 @@ export default function App() {
                   <select
                     value={actionDisadvantage}
                     onChange={(e) => setActionDisadvantage(Number(e.target.value) as DisadvantageType)}
-                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-md focus:outline-none focus:border-[#6B1717]"
                   >
                     <option value={0}>Aucune (0)</option>
                     <option value={1}>Défavorable (-1)</option>
@@ -901,7 +973,7 @@ export default function App() {
                   <select
                     value={actionSceneType}
                     onChange={(e) => setActionSceneType(e.target.value)}
-                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-md focus:outline-none focus:border-[#6B1717]"
                   >
                     <option value="investigation">Investigation / Enquête générale</option>
                     <option value="physique">Action Physique / Athlétisme / Escalade</option>
@@ -919,7 +991,7 @@ export default function App() {
                   <select
                     value={actionInjury}
                     onChange={(e) => setActionInjury(Number(e.target.value) as InjuryStage)}
-                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-md focus:outline-none focus:border-[#6B1717]"
                   >
                     <option value={1}>Seuil 1 : Indemne (Aucun malus)</option>
                     <option value={2}>Seuil 2 : Éprouvé (-1 si action physique)</option>
@@ -936,7 +1008,7 @@ export default function App() {
                   <select
                     value={actionPrivilegeBonus}
                     onChange={(e) => setActionPrivilegeBonus(Number(e.target.value))}
-                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-md focus:outline-none focus:border-[#6B1717]"
                   >
                     <option value={0}>Aucun (0)</option>
                     <option value={1}>Privilège de Métier (+1)</option>
@@ -1008,7 +1080,7 @@ export default function App() {
                   <select
                     value={socialRank}
                     onChange={(e) => setSocialRank(Number(e.target.value) as SkillRank)}
-                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-md focus:outline-none focus:border-[#6B1717]"
                   >
                     {SKILL_RANKS.map((r) => (
                       <option key={r.rank} value={r.rank}>
@@ -1025,7 +1097,7 @@ export default function App() {
                   <select
                     value={socialAttitude}
                     onChange={(e) => setSocialAttitude(Number(e.target.value) as -1 | 0 | 1)}
-                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-md focus:outline-none focus:border-[#6B1717]"
                   >
                     <option value={-1}>Hostile (-1 — Refus ou défiance)</option>
                     <option value={0}>Neutre (0 — Attentiste ou professionnel)</option>
@@ -1040,7 +1112,7 @@ export default function App() {
                   <select
                     value={socialLink}
                     onChange={(e) => setSocialLink(Number(e.target.value))}
-                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-md focus:outline-none focus:border-[#6B1717]"
                   >
                     <option value={-3}>-3 : Dette lourde / Rancune tenace</option>
                     <option value={-2}>-2 : Froid / Ressentiment</option>
@@ -1059,7 +1131,7 @@ export default function App() {
                   <select
                     value={socialDemand}
                     onChange={(e) => setSocialDemand(Number(e.target.value) as -1 | 0 | 1)}
-                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-md focus:outline-none focus:border-[#6B1717]"
                   >
                     <option value={-1}>Lourde (-1 — Risquée ou compromettante)</option>
                     <option value={0}>Ordinaire (0 — Demande normale)</option>
@@ -1078,7 +1150,7 @@ export default function App() {
                     <select
                       value={socialAdvantage}
                       onChange={(e) => setSocialAdvantage(Number(e.target.value) as AdvantageType)}
-                      className="w-1/2 bg-[#FAF7EE] border border-stone-400 p-2 text-xs text-stone-900 rounded-none"
+                      className="w-1/2 bg-[#FAF7EE] border border-stone-400 p-2 text-xs text-stone-900 rounded-md"
                     >
                       <option value={0}>Avantage: 0</option>
                       <option value={1}>Avantage: +1</option>
@@ -1087,7 +1159,7 @@ export default function App() {
                     <select
                       value={socialDisadvantage}
                       onChange={(e) => setSocialDisadvantage(Number(e.target.value) as DisadvantageType)}
-                      className="w-1/2 bg-[#FAF7EE] border border-stone-400 p-2 text-xs text-stone-900 rounded-none"
+                      className="w-1/2 bg-[#FAF7EE] border border-stone-400 p-2 text-xs text-stone-900 rounded-md"
                     >
                       <option value={0}>Désavantage: 0</option>
                       <option value={1}>Désavantage: -1</option>
@@ -1103,7 +1175,7 @@ export default function App() {
                   <select
                     value={socialInjury}
                     onChange={(e) => setSocialInjury(Number(e.target.value) as InjuryStage)}
-                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-md focus:outline-none focus:border-[#6B1717]"
                   >
                     <option value={1}>Indemne / Éprouvé (0 malus)</option>
                     <option value={3}>Blessé (-1 général)</option>
@@ -1172,7 +1244,7 @@ export default function App() {
                   <select
                     value={pursuitRank}
                     onChange={(e) => setPursuitRank(Number(e.target.value) as SkillRank)}
-                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-md focus:outline-none focus:border-[#6B1717]"
                   >
                     {SKILL_RANKS.map((r) => (
                       <option key={r.rank} value={r.rank}>
@@ -1189,7 +1261,7 @@ export default function App() {
                   <select
                     value={pursuitDistance}
                     onChange={(e) => setPursuitDistance(Number(e.target.value))}
-                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-md focus:outline-none focus:border-[#6B1717]"
                   >
                     <option value={1}>Au contact / Fuyard ralenti (+1)</option>
                     <option value={0}>Distance moyenne / Vue directe (0)</option>
@@ -1205,7 +1277,7 @@ export default function App() {
                   <select
                     value={pursuitOpponentSpeed}
                     onChange={(e) => setPursuitOpponentSpeed(Number(e.target.value))}
-                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-md focus:outline-none focus:border-[#6B1717]"
                   >
                     <option value={1}>Lourd / Âgé / Encombré (+1)</option>
                     <option value={0}>Ordinaire / Vitesse moyenne (0)</option>
@@ -1221,7 +1293,7 @@ export default function App() {
                   <select
                     value={pursuitEnvironment}
                     onChange={(e) => setPursuitEnvironment(Number(e.target.value))}
-                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-md focus:outline-none focus:border-[#6B1717]"
                   >
                     <option value={1}>Boulevards dégagés (+1)</option>
                     <option value={0}>Rues ordinaires (0)</option>
@@ -1318,7 +1390,7 @@ export default function App() {
                   <select
                     value={combatRank}
                     onChange={(e) => setCombatRank(Number(e.target.value) as SkillRank)}
-                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-md focus:outline-none focus:border-[#6B1717]"
                   >
                     {SKILL_RANKS.map((r) => (
                       <option key={r.rank} value={r.rank}>
@@ -1335,7 +1407,7 @@ export default function App() {
                   <select
                     value={combatOpponentPhysique}
                     onChange={(e) => setCombatOpponentPhysique(Number(e.target.value))}
-                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-md focus:outline-none focus:border-[#6B1717]"
                   >
                     <option value={1}>Figurant / Fragile (+1)</option>
                     <option value={0}>Sbire ordinaire (0)</option>
@@ -1352,7 +1424,7 @@ export default function App() {
                   <select
                     value={combatCharWeapon}
                     onChange={(e) => setCombatCharWeapon(e.target.value as WeaponCategory)}
-                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-md focus:outline-none focus:border-[#6B1717]"
                   >
                     <option value="legere">Légère (Dégâts 1 / Maj 2 — Poing, matraque, surin)</option>
                     <option value="moyenne">Moyenne (Dégâts 2 / Maj 4 — Revolver, sabre)</option>
@@ -1367,7 +1439,7 @@ export default function App() {
                   <select
                     value={combatOppWeapon}
                     onChange={(e) => setCombatOppWeapon(e.target.value as WeaponCategory)}
-                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-md focus:outline-none focus:border-[#6B1717]"
                   >
                     <option value="legere">Légère (Dégâts 1 / Crit 2 — Couteau, canne)</option>
                     <option value="moyenne">Moyenne (Dégâts 2 / Crit 4 — Arme à feu)</option>
@@ -1386,7 +1458,7 @@ export default function App() {
                     <select
                       value={combatAdvantage}
                       onChange={(e) => setCombatAdvantage(Number(e.target.value) as AdvantageType)}
-                      className="w-1/2 bg-[#FAF7EE] border border-stone-400 p-2 text-xs text-stone-900 rounded-none"
+                      className="w-1/2 bg-[#FAF7EE] border border-stone-400 p-2 text-xs text-stone-900 rounded-md"
                     >
                       <option value={0}>Avantage: 0</option>
                       <option value={1}>Avantage: +1</option>
@@ -1395,7 +1467,7 @@ export default function App() {
                     <select
                       value={combatDisadvantage}
                       onChange={(e) => setCombatDisadvantage(Number(e.target.value) as DisadvantageType)}
-                      className="w-1/2 bg-[#FAF7EE] border border-stone-400 p-2 text-xs text-stone-900 rounded-none"
+                      className="w-1/2 bg-[#FAF7EE] border border-stone-400 p-2 text-xs text-stone-900 rounded-md"
                     >
                       <option value={0}>Désavantage: 0</option>
                       <option value={1}>Désavantage: -1</option>
@@ -1411,7 +1483,7 @@ export default function App() {
                   <select
                     value={combatInjury}
                     onChange={(e) => setCombatInjury(Number(e.target.value) as InjuryStage)}
-                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-none focus:outline-none focus:border-[#6B1717]"
+                    className="w-full bg-[#FAF7EE] border border-stone-400 p-2 text-xs sm:text-sm text-stone-900 rounded-md focus:outline-none focus:border-[#6B1717]"
                   >
                     <option value={1}>Seuil 1 : Indemne (0 malus)</option>
                     <option value={2}>Seuil 2 : Éprouvé (-1 physique)</option>
@@ -1543,46 +1615,50 @@ export default function App() {
           {/* LAST ROLL RESULT & ARCHIVE LOG (SYNCHRONIZED REAL-TIME) */}
           {/* ======================================================== */}
           {lastRoll && (
-            <div className="mt-6 border-t-2 border-[#5C3A1D]/30 pt-4 space-y-3">
+            <div className="mt-7 border-t border-[#c5a059]/40 pt-5 space-y-3">
               <div className="flex items-center justify-between">
-                <div className="text-xs font-cinzel font-bold uppercase tracking-wider text-stone-800 flex items-center gap-1.5">
-                  <Dices className="w-4 h-4 text-[#6B1717]" />
-                  <span>Résultat Officiel du Tirage :</span>
+                <div className="text-xs font-cinzel-deco font-bold uppercase tracking-widest text-[#dfba73] flex items-center gap-2">
+                  <Dices className="w-4 h-4 text-[#c5a059]" />
+                  <span>★ Résultat Officiel du Tirage ★</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-xs text-stone-600">
+                <div className="flex items-center gap-2 text-xs text-[#a69d8d]">
                   <span
-                    className="w-2.5 h-2.5 rounded-full inline-block shadow-2xs"
-                    style={{ backgroundColor: lastRoll.author?.color || '#78350f' }}
+                    className="w-2.5 h-2.5 rounded-full border border-[#c5a059] inline-block shadow-xs"
+                    style={{ backgroundColor: lastRoll.author?.color || '#c5a059' }}
                   />
-                  <span className="font-bold">{lastRoll.author?.name}</span>
-                  <span className="text-[11px] text-stone-500">
+                  <span className="font-bold text-[#f4ecd8] font-cinzel">{lastRoll.author?.name}</span>
+                  <span className="text-[11px] text-[#a69d8d]">
                     ({lastRoll.author?.role === 'gm' ? 'MJ' : 'Inspecteur'})
                   </span>
                 </div>
               </div>
 
               {lastRoll.isSecret && profile.role !== 'gm' ? (
-                <div className="p-4 bg-stone-100 border border-stone-300 rounded italic text-xs text-stone-600 text-center">
+                <div className="p-4 bg-[#121820] border border-dashed border-[#c5a059]/60 italic text-xs text-[#a69d8d] text-center font-typewriter">
                   🔒 [Jet secret confidentiel effectué par le Meneur de Jeu — Les conséquences se dévoileront en jeu]
                 </div>
               ) : (
-                <div className="p-4 sm:p-5 bg-[#FAF7EE] border-2 border-[#6B1717] rounded-lg space-y-3 shadow-md">
+                <div className="p-4 sm:p-5 bg-[#151d27] border-2 border-[#c5a059] relative shadow-lg space-y-3">
+                  <div className="artdeco-corner-tl" />
+                  <div className="artdeco-corner-tr" />
+                  <div className="artdeco-corner-bl" />
+                  <div className="artdeco-corner-br" />
                   
                   {/* HIGH VISIBILITY SCORE & DEGREE HEADER */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/80 p-3 sm:p-4 rounded border border-[#78350F]/20 shadow-xs">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0d1117] p-3.5 sm:p-4 border border-[#c5a059]/40 shadow-inner">
                     
                     {/* Action & Breakdown */}
                     <div className="space-y-1">
-                      <div className="font-cinzel font-bold text-sm sm:text-base text-[#6B1717] tracking-wide">
+                      <div className="font-cinzel font-bold text-sm sm:text-base text-[#f4ecd8] tracking-wide">
                         {lastRoll.actionName}
                       </div>
-                      <div className="text-xs sm:text-sm font-mono text-stone-700 flex items-center gap-2 flex-wrap">
-                        <span className="bg-[#FAF7EE] px-2 py-0.5 rounded border border-stone-300">
-                          Dé brut : <strong>{lastRoll.d8Result}</strong> (1D8)
+                      <div className="text-xs sm:text-sm font-mono text-[#d1c7b7] flex items-center gap-2 flex-wrap">
+                        <span className="bg-[#1a232f] px-2 py-0.5 border border-[#c5a059]/40 text-[#f4ecd8]">
+                          Dé brut : <strong className="text-[#dfba73]">{lastRoll.d8Result}</strong> (1D8)
                         </span>
                         <span>+</span>
-                        <span className="bg-[#FAF7EE] px-2 py-0.5 rounded border border-stone-300">
-                          Modificateur : <strong>{formatMod(lastRoll.modifierTotal)}</strong>
+                        <span className="bg-[#1a232f] px-2 py-0.5 border border-[#c5a059]/40 text-[#f4ecd8]">
+                          Modificateur : <strong className="text-[#dfba73]">{formatMod(lastRoll.modifierTotal)}</strong>
                         </span>
                       </div>
                     </div>
@@ -1590,7 +1666,7 @@ export default function App() {
                     {/* BIG TOTAL SCORE BADGE */}
                     <div className="flex items-center gap-3 self-end sm:self-auto">
                       <div className="text-right">
-                        <span className="text-[10px] font-cinzel font-bold text-stone-500 block uppercase tracking-wider">
+                        <span className="text-[10px] font-cinzel font-bold text-[#dfba73] block uppercase tracking-widest">
                           Score Total
                         </span>
                         <div className={`text-xs sm:text-sm font-cinzel font-bold ${DEGREE_INFO[lastRoll.degree].colorClass}`}>
@@ -1599,16 +1675,16 @@ export default function App() {
                       </div>
 
                       <div
-                        className={`w-14 h-14 sm:w-16 sm:h-16 rounded-lg flex flex-col items-center justify-center border-2 shadow-inner ${
+                        className={`w-14 h-14 sm:w-16 sm:h-16 flex flex-col items-center justify-center border-2 shadow-lg ${
                           lastRoll.degree === 'reussite_majeure'
-                            ? 'bg-emerald-800 text-white border-emerald-900 ring-2 ring-emerald-400/40'
+                            ? 'bg-[#2b1b3d] text-[#e9d5ff] border-[#a855f7] ring-2 ring-[#a855f7]/40'
                             : lastRoll.degree === 'reussite'
-                            ? 'bg-emerald-700 text-white border-emerald-800'
+                            ? 'bg-[#132e20] text-[#bbf7d0] border-[#22c55e]'
                             : lastRoll.degree === 'ambivalent'
-                            ? 'bg-amber-600 text-white border-amber-700'
+                            ? 'bg-[#3b2d13] text-[#fef08a] border-[#eab308]'
                             : lastRoll.degree === 'echec'
-                            ? 'bg-[#9A3412] text-white border-red-800'
-                            : 'bg-[#6B1717] text-white border-red-950 ring-2 ring-red-500/50 animate-pulse'
+                            ? 'bg-[#3b1d14] text-[#fed7aa] border-[#f97316]'
+                            : 'bg-[#450a0a] text-[#fecaca] border-[#ef4444] animate-pulse ring-2 ring-red-500/50'
                         }`}
                       >
                         <span className="text-2xl sm:text-3xl font-mono font-black tracking-tighter leading-none">
@@ -1623,13 +1699,13 @@ export default function App() {
                   </div>
 
                   {/* NARRATIVE CONSEQUENCE */}
-                  <div className="p-3 bg-[#FAF7EE] rounded border border-stone-300/80">
-                    <p className="text-xs sm:text-sm text-stone-900 leading-relaxed font-serif">
+                  <div className="p-3.5 bg-[#0f141b] border-l-2 border-[#c5a059] border-y border-r border-[#c5a059]/30">
+                    <p className="text-xs sm:text-sm text-[#e6decb] leading-relaxed font-marcellus">
                       {lastRoll.narrativeDetail}
                     </p>
 
                     {lastRoll.traceDetail && (
-                      <p className="text-xs text-[#78350F] italic font-semibold pt-1.5 border-t border-stone-200 mt-2">
+                      <p className="text-xs text-[#dfba73] italic font-serif pt-2 border-t border-[#c5a059]/30 mt-2">
                         ⚖️ Conséquence d'enquête : {lastRoll.traceDetail}
                       </p>
                     )}
@@ -1637,14 +1713,14 @@ export default function App() {
 
                   {/* COMBAT DAMAGE BOX */}
                   {lastRoll.category === 'combat' && (
-                    <div className="text-xs font-mono font-bold flex flex-wrap gap-4 pt-1 text-stone-800 bg-white/60 p-2.5 rounded border border-stone-300">
+                    <div className="text-xs font-mono font-bold flex flex-wrap gap-4 pt-1 text-[#d1c7b7] bg-[#0d1117] p-2.5 border border-[#c5a059]/40">
                       {lastRoll.damageInflicted ? (
-                        <span className="text-emerald-800 flex items-center gap-1">
+                        <span className="text-emerald-400 flex items-center gap-1">
                           ⚔️ Dégâts infligés à l'adversaire : <strong>{lastRoll.damageInflicted} seuil(s)</strong>
                         </span>
                       ) : null}
                       {lastRoll.damageTaken ? (
-                        <span className="text-red-800 flex items-center gap-1">
+                        <span className="text-red-400 flex items-center gap-1">
                           🩸 Dégâts subis par l'agent : <strong>{lastRoll.damageTaken} seuil(s)</strong>
                         </span>
                       ) : null}
@@ -1657,37 +1733,37 @@ export default function App() {
 
           {/* HISTORIQUE DES ARCHIVES RECENTES */}
           {history.length > 1 && (
-            <div className="mt-5 border-t border-stone-300 pt-3 space-y-2">
-              <div className="flex justify-between items-center text-xs font-cinzel font-bold text-stone-700">
-                <span>Journal d'Archives Partagé ({history.length} jets) :</span>
+            <div className="mt-6 border-t border-[#c5a059]/30 pt-4 space-y-2.5">
+              <div className="flex justify-between items-center text-xs font-cinzel font-bold text-[#dfba73]">
+                <span className="tracking-wider uppercase">Journal d'Archives Partagé ({history.length} jets) :</span>
                 <button
                   onClick={() => setHistory([])}
-                  className="text-[10px] text-stone-500 hover:text-red-700 cursor-pointer"
+                  className="text-[10px] text-[#a69d8d] hover:text-red-400 cursor-pointer uppercase tracking-wider"
                 >
                   Effacer l'historique
                 </button>
               </div>
 
-              <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+              <div className="space-y-2 max-h-52 overflow-y-auto pr-1">
                 {history.slice(1, 10).map((h) => (
                   <div
                     key={h.id}
-                    className="p-2 bg-white/70 border border-stone-300 rounded text-xs flex justify-between items-center gap-2"
+                    className="p-2.5 bg-[#141b24] border border-[#c5a059]/30 text-xs flex justify-between items-center gap-2 hover:border-[#c5a059]/60 transition-colors"
                   >
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-2">
                       <span
-                        className="w-2 h-2 rounded-full inline-block"
-                        style={{ backgroundColor: h.author?.color || '#78350f' }}
+                        className="w-2.5 h-2.5 rounded-full border border-[#c5a059] inline-block"
+                        style={{ backgroundColor: h.author?.color || '#c5a059' }}
                       />
-                      <span className="font-bold text-stone-800">{h.author?.name} :</span>
-                      <span className="text-stone-600">{h.actionName}</span>
+                      <span className="font-bold text-[#f4ecd8] font-cinzel">{h.author?.name} :</span>
+                      <span className="text-[#a69d8d] font-marcellus">{h.actionName}</span>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono font-bold text-[#6B1717]">
+                    <div className="flex items-center gap-2.5">
+                      <span className="font-mono font-bold text-[#dfba73]">
                         {h.isSecret && profile.role !== 'gm' ? '[Secret]' : `D8 (${h.d8Result}) ${formatMod(h.modifierTotal)} = ${h.finalTotal}`}
                       </span>
-                      <span className={`font-bold ${DEGREE_INFO[h.degree].colorClass}`}>
+                      <span className={`font-bold font-cinzel text-xs ${DEGREE_INFO[h.degree].colorClass}`}>
                         {h.isSecret && profile.role !== 'gm' ? '' : DEGREE_INFO[h.degree].label}
                       </span>
                     </div>
